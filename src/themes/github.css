@@ -77,3 +77,11 @@
 ::highlight(selector) {
   color: var(--syntax-selector);
 }
+
+::highlight(inserted) {
+  color: var(--syntax-tag);
+}
+
+::highlight(deleted) {
+  color: var(--syntax-keyword);
+}

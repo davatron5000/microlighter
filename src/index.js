@@ -3,11 +3,13 @@ import { highlight } from "./highlight.js";
 export { highlight };
 
 const aliases = {
+  diff: "git-diff",
   golang: "go",
   htm: "html",
   js: "javascript",
   jsx: "javascript",
   md: "markdown",
+  patch: "git-diff",
   py: "python",
   rb: "ruby",
   rs: "rust",

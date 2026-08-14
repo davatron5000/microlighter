@@ -35,6 +35,29 @@ test.describe("MicroLighter demo site (docs/index.html)", () => {
     }
   });
 
+  test("highlights inserted and deleted git diff lines", async ({ page }) => {
+    await page.goto("/", { waitUntil: "networkidle" });
+
+    const diffHighlights = await page.evaluate(() => {
+      const linesFor = category => [...CSS.highlights.get(category) ?? []]
+        .filter(range => range.startContainer.parentElement?.closest("pre[lang='git-diff']"))
+        .map(range => range.toString());
+
+      return {
+        inserted: linesFor("inserted"),
+        deleted: linesFor("deleted"),
+        keywords: linesFor("keyword")
+      };
+    });
+
+    expect(diffHighlights.inserted).toEqual(expect.arrayContaining([
+      '+  diff: "git-diff",',
+      '+  html: "html",'
+    ]));
+    expect(diffHighlights.deleted).toContain('-  htm: "html",');
+    expect(diffHighlights.keywords).toEqual([]);
+  });
+
   test("re-highlights after switching themes via the syntax-highlight event", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
 

@@ -91,9 +91,10 @@ Bundled themes:
 ## Languages
 
 Grammars ship as ES modules in `src/grammars/` and are loaded on demand:
-`bash`, `css`, `go`, `html`, `javascript`, `json`, `markdown`, `python`, `ruby`,
-`rust`, `scss`, `typescript`, `yaml`. Common aliases (`js`, `ts`, `sh`, `yml`,
-`rb`, `md`, `sass`, `py`, `rs`, …) resolve automatically.
+`bash`, `css`, `git-diff`, `go`, `html`, `javascript`, `json`, `markdown`,
+`python`, `ruby`, `rust`, `scss`, `typescript`, `yaml`. Common aliases (`js`,
+`ts`, `sh`, `yml`, `rb`, `md`, `diff`, `patch`, `sass`, `py`, `rs`, …) resolve
+automatically.
 
 ## Build
 

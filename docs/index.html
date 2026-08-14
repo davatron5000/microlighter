@@ -800,6 +800,23 @@ const answer = 42 as const;
 await highlightAll();</code></pre>
     </section>
 
+    <section class="sample" aria-labelledby="git-diff-label">
+      <div class="sample-label">
+        <h2 id="git-diff-label">Git diff</h2>
+      </div>
+      <pre lang="git-diff"><code>diff --git a/src/index.js b/src/index.js
+index 5c96d8e..55c1324 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -5,6 +5,7 @@ export { highlight };
+ const aliases = {
++  diff: "git-diff",
+   golang: "go",
+-  htm: "html",
++  html: "html",
+ };</code></pre>
+    </section>
+
     <section class="sample" aria-labelledby="yaml-label">
       <div class="sample-label">
         <h2 id="yaml-label">YAML</h2>

@@ -10,6 +10,8 @@ export const highlight = (blocks, grammarFor, grammarsByScope) => {
 
   const categoryFor = scope => {
     if (/comment|markup\.quote/.test(scope)) return "comment";
+    if (/markup\.inserted/.test(scope)) return "inserted";
+    if (/markup\.deleted/.test(scope)) return "deleted";
     if (/constant\.character\.entity/.test(scope)) return "entity";
     if (/keyword\.control\.doctype/.test(scope)) return "doctype";
     if (/keyword\.control\.at-rule/.test(scope)) return "atrule";
