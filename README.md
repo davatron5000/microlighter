@@ -198,6 +198,7 @@ Bundled themes:
 - `cobalt2`
 - `dracula`
 - `github`
+- `gruvbox`
 - `min`
 - `monokai`
 - `night-owl`
