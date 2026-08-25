@@ -4,6 +4,7 @@
   "description": "A tiny, dependency-free syntax highlighter built on the CSS Custom Highlight API and TextMate grammars.",
   "type": "module",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
   "exports": {
     ".": "./dist/index.js",

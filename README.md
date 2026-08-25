@@ -134,6 +134,20 @@ Import the optional `<micro-lighter>` custom element:
 
 Style the controls with `::part(copy-button)` and `::part(line-numbers)`.
 
+### TypeScript
+
+Declarations ship with the package, including for the grammar and auto-run
+entry points.
+
+```ts
+import { highlightAll, type HighlightAllOptions } from "microlighter";
+import javascript from "microlighter/grammars/javascript.js";
+```
+
+Importing `microlighter/micro-lighter-element.js` also registers
+`<micro-lighter>` in `HTMLElementTagNameMap`, so `querySelector`
+returns a typed element.
+
 ## Language detection
 
 The recommended format is a `language-*` class:
