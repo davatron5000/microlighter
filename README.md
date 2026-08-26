@@ -103,8 +103,8 @@ The event can also bubble from a code block or one of its parents.
 Use the auto runner directly from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/microlighter@2/themes/github.css">
-<script type="module" src="https://cdn.jsdelivr.net/npm/microlighter@2/microlighter.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/microlighter@2/dist/themes/github.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/microlighter@2/dist/microlighter.min.js"></script>
 
 <body data-syntax-theme="github">
   <pre><code class="language-javascript">const answer = 42;</code></pre>
