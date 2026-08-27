@@ -1,38 +1,51 @@
 // Reference: Microsoft VS Code (MIT) — https://github.com/microsoft/vscode/blob/main/extensions/ini/syntaxes/ini.tmLanguage.json
+// Comment rules rewritten without upstream's `(?!\G)` container (native JS RegExp lacks `\G`).
 export default {
-    scopeName: "source.ini",
-    patterns: [
-        { include: "#comments" },
-        { include: "#section-headers" },
-        { include: "#key-value" },
-        { include: "#strings" },
-        { include: "#constants" },
-        { include: "#numbers" }
-    ],
-    repository: {
-        comments: { match: "^\\s*[;#].*$", name: "comment.line" },
-        "section-headers": {
-            match: "^\\s*\\[([^\\[\\]]+)\\]\\s*$",
-            captures: {
-                1: { name: "entity.name.section" }
-            }
-        },
-        "key-value": {
-            match: "^\\s*([^=;#\\s][^=;#]*?)\\s*(?==)",
-            captures: { 1: { name: "entity.name.key" } }
-        },
-        strings: {
-            patterns: [
-                { match: "'(?:\\\\.|[^'\\\\])*'", name: "string.quoted.single" },
-                { match: "\"(?:\\\\.|[^\"\\\\])*\"", name: "string.quoted.double" }
-            ]
-        },
-        constants: {
-            patterns: [
-                { match: "\\b(?:true|false|yes|no|on|off)\\b", name: "constant.language.boolean" },
-                { match: "\\b(?:null|none)\\b", name: "constant.language" }
-            ]
-        },
-        numbers: { match: "(?<![\\w.])[+-]?\\d+(?:\\.\\d+)?\\b", name: "constant.numeric" }
+  scopeName: "source.ini",
+  patterns: [
+    {
+      begin: "#",
+      beginCaptures: { 0: { name: "punctuation.definition.comment.ini" } },
+      end: "\\n",
+      name: "comment.line.number-sign.ini"
+    },
+    {
+      begin: ";",
+      beginCaptures: { 0: { name: "punctuation.definition.comment.ini" } },
+      end: "\\n",
+      name: "comment.line.semicolon.ini"
+    },
+    {
+      match: "\\b([a-zA-Z0-9_.-]+)\\b\\s*(=)",
+      captures: {
+        1: { name: "keyword.other.definition.ini" },
+        2: { name: "punctuation.separator.key-value.ini" }
+      }
+    },
+    {
+      match: "^(\\[)(.*?)(\\])",
+      name: "entity.name.section.group-title.ini",
+      captures: {
+        1: { name: "punctuation.definition.entity.ini" },
+        3: { name: "punctuation.definition.entity.ini" }
+      }
+    },
+    {
+      begin: "'",
+      beginCaptures: { 0: { name: "punctuation.definition.string.begin.ini" } },
+      end: "'",
+      endCaptures: { 0: { name: "punctuation.definition.string.end.ini" } },
+      name: "string.quoted.single.ini",
+      patterns: [
+        { match: "\\\\.", name: "constant.character.escape.ini" }
+      ]
+    },
+    {
+      begin: "\"",
+      beginCaptures: { 0: { name: "punctuation.definition.string.begin.ini" } },
+      end: "\"",
+      endCaptures: { 0: { name: "punctuation.definition.string.end.ini" } },
+      name: "string.quoted.double.ini"
     }
+  ]
 };
