@@ -84,8 +84,8 @@ await highlightAll({
 Import the auto runner to highlight the page as soon as the module loads:
 
 ```html
-<link rel="stylesheet" href="./node_modules/microlighter/themes/github.css">
-<script type="module" src="./node_modules/microlighter/microlighter.min.js"></script>
+<link rel="stylesheet" href="./node_modules/microlighter/dist/themes/github.css">
+<script type="module" src="./node_modules/microlighter/dist/microlighter.min.js"></script>
 
 <body data-syntax-theme="github">
 ```
@@ -103,8 +103,8 @@ The event can also bubble from a code block or one of its parents.
 Use the auto runner directly from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/microlighter@2/themes/github.css">
-<script type="module" src="https://cdn.jsdelivr.net/npm/microlighter@2/microlighter.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/microlighter@2/dist/themes/github.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/microlighter@2/dist/microlighter.min.js"></script>
 
 <body data-syntax-theme="github">
   <pre><code class="language-javascript">const answer = 42;</code></pre>
@@ -116,8 +116,8 @@ Use the auto runner directly from a CDN:
 Import the optional `<micro-lighter>` custom element:
 
 ```html
-<link rel="stylesheet" href="./node_modules/microlighter/themes/github.css">
-<script type="module" src="./node_modules/microlighter/micro-lighter-element.min.js"></script>
+<link rel="stylesheet" href="./node_modules/microlighter/dist/themes/github.css">
+<script type="module" src="./node_modules/microlighter/dist/micro-lighter-element.min.js"></script>
 
 <body data-syntax-theme="github">
   <micro-lighter language="javascript" controls="copy" line-numbers>
@@ -186,7 +186,7 @@ Load one theme and set the matching `data-syntax-theme` value on `<body>` or
 any container:
 
 ```html
-<link rel="stylesheet" href="./node_modules/microlighter/themes/night-owl.css">
+<link rel="stylesheet" href="./node_modules/microlighter/dist/themes/night-owl.css">
 
 <section data-syntax-theme="night-owl">
   <!-- code blocks -->
