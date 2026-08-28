@@ -28,8 +28,6 @@
       const renamedThemes = { "dark-plus": "vscode-plus", "github-light": "github" };
       document.documentElement.dataset.syntaxTheme = renamedThemes[storedTheme] || storedTheme || "github";
     } catch {}
-    document.documentElement.dataset.colorScheme = "dark";
-    document.documentElement.style.colorScheme = "dark";
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -727,7 +725,6 @@ jobs:
     };
 
     themeSelect.value = setSyntaxTheme(themes.includes(currentTheme) ? currentTheme : "github");
-    setColorScheme(document.documentElement.dataset.colorScheme);
 
     themeSelect.addEventListener("change", event => {
       setSyntaxTheme(event.target.value);
@@ -735,6 +732,12 @@ jobs:
         localStorage.setItem("syntax-theme", event.target.value);
       } catch {}
     });
+
+    // set color scheme
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const hasMediaQueryPreference = typeof mediaQuery.matches === "boolean";
+    const currentColorScheme = hasMediaQueryPreference && mediaQuery.matches ? "dark" : "light";
+    setColorScheme(currentColorScheme);
 
     colorSchemeToggle.addEventListener("click", () => {
       setColorScheme(document.documentElement.dataset.colorScheme === "dark" ? "light" : "dark");
