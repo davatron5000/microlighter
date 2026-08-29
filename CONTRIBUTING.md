@@ -68,6 +68,7 @@ ranges live in the CSS Custom Highlight registry.
    the `::highlight(...)` categories. Use existing themes as a template.
 2. Add an `@import` for it in `src/themes/index.css`.
 3. Add the theme to the `<select>` in `docs/index.html`.
+4. Add the theme to the `<select>` in `docs/icustom-element.html`.
 
 Keep page-chrome styling (backgrounds, borders) out of theme files — themes
 should only define syntax colors. The demo page derives its own chrome.
