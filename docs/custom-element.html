@@ -368,7 +368,6 @@ micro-lighter::part(line-numbers) {
       setColorScheme(document.documentElement.dataset.colorScheme === "dark" ? "light" : "dark");
     });
     function reRenderExample(){
-      console.log("hi")
       document.getElementById("themed-example").innerHTML = `&lt;html data-syntax-theme="${themeSelect.value}"&gt;
   &lt;head&gt;
     &lt;link rel="stylesheet" href="./microlighter/themes/${themeSelect.value}.css"&gt;
