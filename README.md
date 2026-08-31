@@ -137,7 +137,8 @@ Style the controls with `::part(copy-button)` and `::part(line-numbers)`.
 ### TypeScript
 
 Declarations ship with the package, including for the grammar and auto-run
-entry points.
+entry points. They are generated from the JSDoc types in `src/`, so the source
+and the published types cannot drift.
 
 ```ts
 import { highlightAll, type HighlightAllOptions } from "microlighter";

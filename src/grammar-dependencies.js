@@ -1,3 +1,14 @@
+/**
+ * @import { Grammar, GrammarValue } from "./grammar.js"
+ */
+
+/**
+ * @typedef {object} LoadedGrammars
+ * @property {Record<string, Grammar>} languages Grammars keyed by module name.
+ * @property {Map<string, Grammar>} scopes Grammars keyed by TextMate scope name.
+ */
+
+/** @type {Record<string, string>} */
 const languageAliases = {
   docker: "dockerfile",
   gql: "graphql",
@@ -17,7 +28,7 @@ const languageAliases = {
 /**
  * Convert a supported language alias to its grammar module name.
  * @param {string} language
- * @param {Object<string, string>} [aliases]
+ * @param {Record<string, string>} [aliases]
  * @returns {string}
  */
 export const normalizeLanguage = (language, aliases = {}) =>
@@ -26,12 +37,14 @@ export const normalizeLanguage = (language, aliases = {}) =>
 /**
  * Find grammar modules referenced by external TextMate scope includes.
  * Local repository references (`#...`, `$self`, and `$base`) are ignored.
- * @param {*} value Grammar or nested grammar rule to inspect.
+ * @param {GrammarValue} value Grammar or nested grammar rule to inspect.
  * @returns {Set<string>} Normalized grammar module names.
  */
 export const getExternalLanguages = value => {
+  /** @type {Set<string>} */
   const languages = new Set();
 
+  /** @param {GrammarValue} item */
   const visit = item => {
     if (Array.isArray(item)) {
       item.forEach(visit);
@@ -52,7 +65,7 @@ export const getExternalLanguages = value => {
 /**
  * Dynamically import a shipped grammar.
  * @param {string} language
- * @returns {Promise<Object | null>}
+ * @returns {Promise<Grammar | null>}
  */
 const getGrammar = language => import(`./grammars/${language}.js`)
   .then(module => module.default)
@@ -60,14 +73,13 @@ const getGrammar = language => import(`./grammars/${language}.js`)
 
 /**
  * Create a cached loader that also resolves external grammar dependencies.
- * @param {(language: string) => Promise<Object | null>} [importLanguage]
- * @returns {(languages: string[]) => Promise<{
- *   languages: Object<string, Object>,
- *   scopes: Map<string, Object>
- * }>}
+ * @param {(language: string) => Promise<Grammar | null>} [importLanguage]
+ * @returns {(languages: string[]) => Promise<LoadedGrammars>}
  */
 export const createGrammarLoader = (importLanguage = getGrammar) => {
+  /** @type {Map<string, Promise<Grammar | null>>} */
   const loadingLanguages = new Map();
+  /** @type {LoadedGrammars} */
   const grammars = {
     languages: {},
     scopes: new Map()
@@ -76,7 +88,7 @@ export const createGrammarLoader = (importLanguage = getGrammar) => {
   /**
    * Import and index a grammar once for the lifetime of this loader.
    * @param {string} language
-   * @returns {Promise<Object | null>}
+   * @returns {Promise<Grammar | null>}
    */
   const loadGrammar = language => {
     if (!loadingLanguages.has(language)) {
@@ -90,7 +102,7 @@ export const createGrammarLoader = (importLanguage = getGrammar) => {
       loadingLanguages.set(language, grammarModule);
     }
 
-    return loadingLanguages.get(language);
+    return /** @type {Promise<Grammar | null>} */ (loadingLanguages.get(language));
   };
 
   return async languages => {
@@ -100,10 +112,12 @@ export const createGrammarLoader = (importLanguage = getGrammar) => {
 
     while (pending.length) {
       pending.forEach(language => visited.add(language));
-      const loaded = (await Promise.all(pending.map(loadGrammar))).filter(Boolean);
+      const loaded = /** @type {Grammar[]} */ (
+        (await Promise.all(pending.map(loadGrammar))).filter(Boolean)
+      );
       pending = [...new Set(loaded.flatMap(grammar =>
         grammar.dependencies || [...getExternalLanguages(grammar)]
-      ))].map(normalizeLanguage).filter(language => !visited.has(language));
+      ))].map(language => normalizeLanguage(language)).filter(language => !visited.has(language));
     }
 
     return grammars;

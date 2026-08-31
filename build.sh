@@ -8,6 +8,7 @@ bundle="$dist/microlighter.js"
 minified_bundle="$dist/microlighter.min.js"
 element_bundle="$dist/micro-lighter-element.js"
 minified_element_bundle="$dist/micro-lighter-element.min.js"
+element_bundle_types="$dist/micro-lighter-element.d.ts"
 minified_bundle_types="$dist/microlighter.min.d.ts"
 minified_element_bundle_types="$dist/micro-lighter-element.min.d.ts"
 
@@ -15,6 +16,14 @@ minified_element_bundle_types="$dist/micro-lighter-element.min.d.ts"
 rm -rf "$dist"
 mkdir -p "$dist"
 cp -R "$directory/src/." "$dist/"
+
+npx tsc --project "$directory/tsconfig.json"
+
+# `tsc` drops the triple-slash reference to global.d.ts because that file is an
+# input rather than an emitted output
+printf '/// <reference path="./global.d.ts" />\n%s' "$(cat "$element_bundle_types")" \
+  > "$element_bundle_types.tmp"
+mv "$element_bundle_types.tmp" "$element_bundle_types"
 
 npx --yes esbuild@0.25.8 "$directory/src/grammars/"*.js \
   --minify-whitespace \

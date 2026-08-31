@@ -1,3 +1,17 @@
+/**
+ * Any JSON value that can appear in a TextMate grammar. Grammars carry fields
+ * this highlighter does not read, and both grammars and rules are walked
+ * generically when resolving scope includes.
+ */
+export type GrammarValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | GrammarValue[]
+  | { [key: string]: GrammarValue };
+
 /** A named capture group in a TextMate rule, keyed by capture index. */
 export interface GrammarCaptures {
   [index: string]: { name: string };
@@ -16,7 +30,7 @@ export interface GrammarRule {
   beginCaptures?: GrammarCaptures;
   endCaptures?: GrammarCaptures;
   patterns?: GrammarRule[];
-  [key: string]: unknown;
+  [key: string]: GrammarValue;
 }
 
 /** A repository entry, which may be a bare rule or a list of patterns. */
@@ -32,5 +46,5 @@ export interface Grammar {
    * includes cannot be discovered from the rules alone.
    */
   dependencies?: string[];
-  [key: string]: unknown;
+  [key: string]: GrammarValue;
 }
