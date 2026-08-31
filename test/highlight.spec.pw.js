@@ -231,6 +231,33 @@ test.describe("MicroLighter demo site (docs/index.html)", () => {
     expect(sampleLanguages).toEqual(["html", "markdown", "python", "sql", "cpp", "tsx"]);
   });
 
+  test("highlights a large stylesheet without pathological rescanning", async ({ page }) => {
+    await page.goto(HOMEPAGE, { waitUntil: "networkidle" });
+
+    const duration = await page.evaluate(async () => {
+      const { highlightAll } = await import("/docs/microlighter/index.js");
+      const sources = Array.from({ length: 60 }, (_, index) =>
+        `       url("https://fonts.example/font-${index}.woff2") format("woff2")`).join(",\n");
+      const rule = `@font-face {\n  font-family: "Example";\n  src:\n${sources};\n}\n`;
+
+      let css = "/* unterminated apostrophe: don't */\n";
+      while (css.length < 32 * 1024) css += rule;
+
+      const code = document.createElement("code");
+      code.className = "language-css";
+      code.textContent = css;
+      const pre = document.createElement("pre");
+      pre.append(code);
+      document.body.append(pre);
+
+      const start = performance.now();
+      await highlightAll();
+      return performance.now() - start;
+    });
+
+    expect(duration).toBeLessThan(5000);
+  });
+
   test("loads without runtime errors", async ({ page }) => {
     const errors = [];
     page.on("pageerror", error => errors.push(String(error)));

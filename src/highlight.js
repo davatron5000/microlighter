@@ -12,14 +12,20 @@ import { createGrammarLoader, normalizeLanguage } from "./grammar-dependencies.j
  */
 
 /**
- * Start and end offsets keyed by capture-group index. Group 0 spans the whole
- * match; a group that did not participate in the match is `undefined`.
- * @typedef {{[group: string]: [number, number] | undefined} & {0: [number, number]}} MatchIndices
+ * Start and end offsets per capture group. Group 0 spans the whole match; a
+ * group that did not participate in the match is `undefined`.
+ * @typedef {RegExpIndicesArray & {0: [number, number]}} MatchIndices
+ */
+
+/**
+ * The offsets of a match, or of the sentinel cached for a pattern that has no
+ * further match in the region being scanned.
+ * @typedef {{indices: MatchIndices}} MatchOffsets
  */
 
 /**
  * A match from a `d`-flagged expression.
- * @typedef {RegExpExecArray & {indices: MatchIndices}} Match
+ * @typedef {RegExpExecArray & MatchOffsets} Match
  */
 
 /**
@@ -54,6 +60,9 @@ const loadGrammars = createGrammarLoader();
  * @type {Map<string, Highlight>}
  */
 const highlights = new Map();
+
+/** @type {MatchOffsets} */
+const noMatch = { indices: [[Infinity, Infinity]] };
 
 /**
  * Flatten a TextMate scope to a stable semantic CSS highlight category.
@@ -113,7 +122,7 @@ const addRange = (node, start, end, scope) => {
  */
 const addCaptures = (node, match, captures = {}) => {
   Object.entries(captures).forEach(([index, capture]) => {
-    const offsets = match.indices[index];
+    const offsets = match.indices[+index];
     if (offsets) addRange(node, ...offsets, capture.name);
   });
 };
@@ -166,6 +175,8 @@ export const highlightAll = async ({
   const grammars = await loadGrammars(languages);
   /** @type {Map<string, RegExp>} */
   const regexes = new Map();
+  /** @type {Map<string, MatchOffsets>} */
+  let matches = new Map();
 
   highlights.forEach((ranges, category) => {
     if (CSS.highlights.get(category) === ranges) CSS.highlights.delete(category);
@@ -173,7 +184,8 @@ export const highlightAll = async ({
   });
 
   /**
-   * Find the next bounded match while reusing compiled grammar expressions.
+   * Find the next bounded match, reusing compiled grammar expressions and the
+   * memoized match for each pattern.
    * @param {string} pattern
    * @param {Text} node
    * @param {number} start
@@ -181,11 +193,19 @@ export const highlightAll = async ({
    * @returns {Match | null}
    */
   const exec = (pattern, node, start, end) => {
-    if (!regexes.has(pattern)) regexes.set(pattern, new RegExp(pattern, "dgm"));
-    const regex = /** @type {RegExp} */ (regexes.get(pattern));
-    regex.lastIndex = start;
-    const match = /** @type {Match | null} */ (regex.exec(node.data));
-    return match && match.indices[0][0] < end && match.indices[0][1] <= end ? match : null;
+    let match = matches.get(pattern);
+
+    if (!match || match.indices[0][0] < start) {
+      if (!regexes.has(pattern)) regexes.set(pattern, new RegExp(pattern, "dgm"));
+      const regex = /** @type {RegExp} */ (regexes.get(pattern));
+      regex.lastIndex = start;
+      match = /** @type {Match | null} */ (regex.exec(node.data)) || noMatch;
+      matches.set(pattern, match);
+    }
+
+    return match.indices[0][0] < end && match.indices[0][1] <= end
+      ? /** @type {Match} */ (match)
+      : null;
   };
 
   /**
@@ -335,6 +355,8 @@ export const highlightAll = async ({
     codeBlock.normalize();
     const node = /** @type {Text | null} */ (codeBlock.firstChild);
     if (node?.nodeType !== Node.TEXT_NODE || node.nextSibling) return;
+
+    matches = new Map();
 
     scanRegion(node, grammar.patterns, 0, node.data.length, grammar);
   });

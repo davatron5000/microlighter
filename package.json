@@ -20,7 +20,7 @@
     "./dist/micro-lighter-element.min.js"
   ],
   "sizeLimit": {
-    "dist/microlighter.min.js": 2100
+    "dist/microlighter.min.js": 2150
   },
   "scripts": {
     "build": "./build.sh",
