@@ -121,7 +121,7 @@
       <article class="feature">
         <span class="feature-index" aria-hidden="true">02</span>
         <div class="feature-specimen size-specimen" aria-hidden="true">
-          <span class="size-value">2.09</span><span class="size-unit">kb<br>gzip</span>
+          <span class="size-value">2.10</span><span class="size-unit">kb<br>gzip</span>
         </div>
         <h2>Blazingly fast!!</h2>
       </article>
@@ -399,6 +399,7 @@ export function YetAnotherTodoApp(): JSX.Element {
             <li data-lang="json">JSON</li>
             <li data-lang="yaml">YAML</li>
             <li data-lang="toml">TOML</li>
+            <li data-lang="nix">Nix</li>
             <li data-lang="sql">SQL</li>
             <li data-lang="markdown">Markdown</li>
             <li data-lang="graphql">GraphQL</li>
@@ -583,6 +584,18 @@ A **tiny** syntax highlighter for the [CSS Custom Highlight API](https://develop
     location / {
         proxy_pass http://127.0.0.1:3000;
     }
+}</code></pre>
+      </template>
+      <template data-lang="nix" data-label="Nix">
+        <pre><code class="language-nix">{ pkgs ? import &lt;nixpkgs&gt; {} }:
+pkgs.stdenv.mkDerivation rec {
+  pname = "microlighter";
+  version = 2;
+  src = ./.;
+
+  buildPhase = ''
+    echo "building ${pname}-${toString version}"
+  '';
 }</code></pre>
       </template>
       <template data-lang="objective-c" data-label="Objective-C">

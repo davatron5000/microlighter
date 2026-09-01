@@ -134,6 +134,23 @@ A **tiny** syntax highlighter for the [CSS Custom Highlight API](https://develop
         proxy_pass http://127.0.0.1:3000;
     }
 }</code></pre>
+    <pre><code class="language-nix"># Build the package from a pinned Nixpkgs input.
+/* This block exercises Nix expressions and both string forms. */
+{ pkgs ? import &lt;nixpkgs&gt; {}, system ? builtins.currentSystem }:
+let
+  name = "microlighter-${toString 38}";
+  source = ./.;
+  homepage = https://github.com/davatron5000/microlighter;
+in rec {
+  inherit name system;
+  enabled = true;
+  missing = null;
+  count = 38;
+  buildPhase = ''
+    echo "building ${name}"
+  '';
+  result = if enabled &amp;&amp; count &gt;= 1 then source else throw "disabled";
+}</code></pre>
     <pre><code class="language-objective-c">@interface Token : NSObject
 @property (nonatomic, strong) NSString *scope;
 @end</code></pre>
