@@ -208,6 +208,18 @@ const answer: number = 42;</code></pre>
 const count = ref(0)
 &lt;/script&gt;
 &lt;button @click="count++"&gt;Count: {{ count }}&lt;/button&gt;</code></pre>
+    <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE catalog [
+  &lt;!ENTITY publisher "MicroLighter Press"&gt;
+]&gt;
+&lt;!-- Namespaced inventory feed --&gt;
+&lt;catalog xmlns:book="urn:example:books"&gt;
+  &lt;book:item id="bk-42" available="true"&gt;
+    &lt;title&gt;Syntax &amp;amp; Semantics by &amp;publisher;&lt;/title&gt;
+    &lt;summary&gt;&lt;![CDATA[Use &lt;tokens&gt; safely.]]&gt;&lt;/summary&gt;
+    &lt;book:cover href="cover.jpg" /&gt;
+  &lt;/book:item&gt;
+&lt;/catalog&gt;</code></pre>
     <pre><code class="language-yaml">name: CI
 on: [push]
 jobs:

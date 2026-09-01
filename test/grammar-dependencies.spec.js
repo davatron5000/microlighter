@@ -16,6 +16,7 @@ import tsx from "../src/grammars/tsx.js";
 import typescript from "../src/grammars/typescript.js";
 import svelte from "../src/grammars/svelte.js";
 import vue from "../src/grammars/vue.js";
+import xml from "../src/grammars/xml.js";
 
 test("finds external grammar languages in nested rules", () => {
   const grammar = {
@@ -64,6 +65,7 @@ test("reports dependencies used by the shipped grammars", () => {
   assert.deepEqual([...getExternalLanguages(cpp)], ["c"]);
   assert.deepEqual([...getExternalLanguages(tsx)], ["js", "ts"]);
   assert.deepEqual([...getExternalLanguages(objectiveC)], ["c"]);
+  assert.deepEqual([...getExternalLanguages(xml)], ["java"]);
   assert.deepEqual(heex.dependencies, ["html", "elixir"]);
   assert.deepEqual(svelte.dependencies, ["html", "css", "scss", "javascript", "typescript"]);
   assert.deepEqual(vue.dependencies, ["html", "css", "scss", "javascript", "typescript"]);

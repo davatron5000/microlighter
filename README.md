@@ -13,7 +13,7 @@ your markup stays clean and editable.
 
 - About 2 KiB compressed
 - No runtime dependencies
-- 37 languages, loaded on demand
+- 41 languages, loaded on demand
 - 10 bundled themes
 - Clean DOM with no token markup
 - Programmatic, automatic, and web component APIs
@@ -191,7 +191,7 @@ MicroLighter includes these grammars:
 `git-diff`, `go`, `graphql`, `heex`, `html`, `ini`, `java`, `javascript`, `json`,
 `kotlin`, `lua`, `markdown`, `nginx`, `objective-c`, `perl`, `php`, `powershell`,
 `python`, `r`, `ruby`, `rust`, `scss`, `sql`, `svelte`, `swift`, `toml`, `tsx`,
-`typescript`, `vue`, and `yaml`.
+`typescript`, `vue`, `xml`, and `yaml`.
 
 Grammars are ES modules and load on demand.
 
