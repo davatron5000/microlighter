@@ -13,7 +13,7 @@ your markup stays clean and editable.
 
 - About 2 KiB compressed
 - No runtime dependencies
-- 37 languages, loaded on demand
+- 41 languages, loaded on demand
 - 10 bundled themes
 - Clean DOM with no token markup
 - Programmatic, automatic, and web component APIs
@@ -179,6 +179,7 @@ Common aliases work automatically:
 | `docker` | `dockerfile` |
 | `py` | `python` |
 | `rb` | `ruby` |
+| `regexp` | `regex` |
 | `gql` | `graphql` |
 
 Custom aliases passed to `highlightAll()` must point to a bundled language.
@@ -190,7 +191,7 @@ MicroLighter includes these grammars:
 `assembly`, `astro`, `bash`, `c`, `cpp`, `csharp`, `css`, `dart`, `dockerfile`, `elixir`,
 `git-diff`, `go`, `graphql`, `heex`, `html`, `ini`, `java`, `javascript`, `json`,
 `kotlin`, `lua`, `markdown`, `nginx`, `objective-c`, `perl`, `php`, `powershell`,
-`python`, `r`, `ruby`, `rust`, `scss`, `sql`, `svelte`, `swift`, `toml`, `tsx`,
+`python`, `r`, `regex`, `ruby`, `rust`, `scss`, `sql`, `svelte`, `swift`, `toml`, `tsx`,
 `typescript`, `vue`, and `yaml`.
 
 Grammars are ES modules and load on demand.

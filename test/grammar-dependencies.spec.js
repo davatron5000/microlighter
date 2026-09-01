@@ -51,6 +51,7 @@ test("recognizes source and text scopes but ignores unsupported includes", () =>
 
 test("normalizes language aliases and preserves canonical names", () => {
   assert.equal(normalizeLanguage("jsx"), "javascript");
+  assert.equal(normalizeLanguage("regexp"), "regex");
   assert.equal(normalizeLanguage("sass"), "scss");
   assert.equal(normalizeLanguage("python"), "python");
   assert.equal(normalizeLanguage("custom-language"), "custom-language");
