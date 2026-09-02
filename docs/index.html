@@ -403,6 +403,8 @@ export function YetAnotherTodoApp(): JSX.Element {
             <li data-lang="graphql">GraphQL</li>
             <li data-lang="dockerfile">Dockerfile</li>
             <li data-lang="git-diff">Git diff</li>
+            <li data-lang="ini">INI</li>
+            <li data-lang="nginx">nginx</li>
           </ul>
         </div>
       </div>
@@ -522,6 +524,13 @@ query GetToken($id: ID!) {
         <pre><code class="language-html">&lt;!-- A comment stays a comment --&gt;
 &lt;button type="button" aria-pressed="false"&gt;42&lt;/button&gt;</code></pre>
       </template>
+      <template data-lang="ini" data-label="INI">
+        <pre><code class="language-ini">; Application settings
+[server]
+port = 8080
+host = "localhost"
+ssl = true</code></pre>
+      </template>
       <template data-lang="java" data-label="Java">
         <pre><code class="language-java">public class Token {
     String scope = "keyword";
@@ -553,6 +562,16 @@ end</code></pre>
         <pre><code class="language-markdown"># MicroLighter
 
 A **tiny** syntax highlighter for the [CSS Custom Highlight API](https://developer.mozilla.org/).</code></pre>
+      </template>
+      <template data-lang="nginx" data-label="nginx">
+        <pre><code class="language-nginx">server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+    }
+}</code></pre>
       </template>
       <template data-lang="objective-c" data-label="Objective-C">
         <pre><code class="language-objective-c">@interface Token : NSObject

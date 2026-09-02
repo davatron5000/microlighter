@@ -92,6 +92,11 @@ query GetToken($id: ID!) {
 &lt;/.button&gt;</code></pre>
     <pre><code class="language-html">&lt;!-- A comment stays a comment --&gt;
 &lt;button type="button" aria-pressed="false"&gt;42&lt;/button&gt;</code></pre>
+    <pre><code class="language-ini">; Application settings
+[server]
+port = 8080
+host = "localhost"
+ssl = true</code></pre>&lt;button type="button" aria-pressed="false"&gt;42&lt;/button&gt;</code></pre>
     <pre><code class="language-java">public class Token {
     String scope = "keyword";
     int start = 0;
@@ -112,6 +117,14 @@ end</code></pre>
     <pre><code class="language-markdown"># MicroLighter
 
 A **tiny** syntax highlighter for the [CSS Custom Highlight API](https://developer.mozilla.org/).</code></pre>
+    <pre><code class="language-nginx">server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+    }
+}</code></pre>
     <pre><code class="language-objective-c">@interface Token : NSObject
 @property (nonatomic, strong) NSString *scope;
 @end</code></pre>
