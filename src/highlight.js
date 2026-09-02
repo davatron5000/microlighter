@@ -1,11 +1,47 @@
 import { createGrammarLoader, normalizeLanguage } from "./grammar-dependencies.js";
 
+/**
+ * @import { Grammar, GrammarCaptures, GrammarRule } from "./grammar.js"
+ */
+
+/**
+ * @typedef {object} HighlightAllOptions
+ * @property {ParentNode} [root=document] Element or document to search.
+ * @property {string} [selector="pre > code"] Selector used to find code blocks.
+ * @property {Record<string, string>} [languageAliases] Extra aliases mapped to bundled grammar names.
+ */
+
+/**
+ * Start and end offsets per capture group. Group 0 spans the whole match; a
+ * group that did not participate in the match is `undefined`.
+ * @typedef {RegExpIndicesArray & {0: [number, number]}} MatchIndices
+ */
+
+/**
+ * The offsets of a match, or of the sentinel cached for a pattern that has no
+ * further match in the region being scanned.
+ * @typedef {{indices: MatchIndices}} MatchOffsets
+ */
+
+/**
+ * A match from a `d`-flagged expression.
+ * @typedef {RegExpExecArray & MatchOffsets} Match
+ */
+
+/**
+ * @typedef {object} RuleContext
+ * @property {Grammar} grammar Grammar the rule was resolved from.
+ * @property {GrammarRule} rule Directly matchable rule.
+ */
+
+/** @param {Element} element */
 const getLanguageClass = element => [...element.classList]
   .find(className => className.startsWith("language-"))
   ?.slice("language-".length);
 
+/** @param {HTMLElement} codeBlock */
 const getLanguage = codeBlock => {
-  const pre = codeBlock.parentElement;
+  const pre = /** @type {HTMLElement} */ (codeBlock.parentElement);
   const language = getLanguageClass(codeBlock)
     || codeBlock.dataset.language
     || getLanguageClass(pre)
@@ -25,6 +61,7 @@ const loadGrammars = createGrammarLoader();
  */
 const highlights = new Map();
 
+/** @type {MatchOffsets} */
 const noMatch = { indices: [[Infinity, Infinity]] };
 
 /**
@@ -35,7 +72,7 @@ const noMatch = { indices: [[Infinity, Infinity]] };
 const getCategory = scope => {
   const parts = scope.split(".");
   const [first, second, third] = parts;
-  const last = parts.at(-1);
+  const last = /** @type {string} */ (parts.at(-1));
 
   if (first === "markup" && ["quote", "inserted", "deleted", "raw"].includes(second)) return second;
   if (first === "entity" && second === "name") return third;
@@ -73,19 +110,19 @@ const addRange = (node, start, end, scope) => {
   range.setEnd(node, end);
 
   if (!highlights.has(category)) highlights.set(category, new Highlight());
-  highlights.get(category).add(range);
+  /** @type {Highlight} */ (highlights.get(category)).add(range);
 };
 
 /**
  * Add named capture-group spans from a TextMate rule match.
  * @param {Text} node
- * @param {RegExpExecArray} match
- * @param {Object<string, {name: string}>} [captures]
+ * @param {Match} match
+ * @param {GrammarCaptures} [captures]
  * @returns {void}
  */
 const addCaptures = (node, match, captures = {}) => {
   Object.entries(captures).forEach(([index, capture]) => {
-    const offsets = match.indices[index];
+    const offsets = match.indices[+index];
     if (offsets) addRange(node, ...offsets, capture.name);
   });
 };
@@ -100,7 +137,7 @@ const escapeRegex = value => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 /**
  * Replace TextMate end-pattern backreferences with escaped begin captures.
  * @param {string} pattern
- * @param {RegExpExecArray} beginMatch
+ * @param {Match} beginMatch
  * @returns {string}
  */
 const expandEnd = (pattern, beginMatch) => pattern.replace(/\\(\d+)/g, (reference, index) => {
@@ -109,22 +146,20 @@ const expandEnd = (pattern, beginMatch) => pattern.replace(/\\(\d+)/g, (referenc
 
 /**
  * Normalize a grammar rule or repository entry to a rule array.
- * @param {*} rule
- * @returns {Object[]}
+ * @param {GrammarRule | GrammarRule[] | undefined} rule
+ * @returns {GrammarRule[]}
  */
 const getRules = rule => {
   if (!rule) return [];
   if (Array.isArray(rule)) return rule;
+
   if (rule.match || rule.begin || rule.include) return [rule];
   return rule.patterns || [];
 };
 
 /**
  * Find code blocks, load their TextMate grammars, and register CSS highlights.
- * @param {Object} [options]
- * @param {ParentNode} [options.root=document]
- * @param {string} [options.selector="pre > code"]
- * @param {Object<string, string>} [options.languageAliases]
+ * @param {HighlightAllOptions} [options]
  * @returns {Promise<HTMLElement[]>}
  */
 export const highlightAll = async ({
@@ -132,12 +167,15 @@ export const highlightAll = async ({
   selector = "pre > code",
   languageAliases
 } = {}) => {
-  const codeBlocks = [...root.querySelectorAll(selector)].filter(getLanguage);
+  const codeBlocks = /** @type {HTMLElement[]} */ ([...root.querySelectorAll(selector)])
+    .filter(getLanguage);
   const languages = codeBlocks.map(codeBlock =>
     normalizeLanguage(getLanguage(codeBlock), languageAliases)
   );
   const grammars = await loadGrammars(languages);
+  /** @type {Map<string, RegExp>} */
   const regexes = new Map();
+  /** @type {Map<string, MatchOffsets>} */
   let matches = new Map();
 
   highlights.forEach((ranges, category) => {
@@ -152,28 +190,30 @@ export const highlightAll = async ({
    * @param {Text} node
    * @param {number} start
    * @param {number} end
-   * @returns {RegExpExecArray | null}
+   * @returns {Match | null}
    */
   const exec = (pattern, node, start, end) => {
     let match = matches.get(pattern);
 
     if (!match || match.indices[0][0] < start) {
       if (!regexes.has(pattern)) regexes.set(pattern, new RegExp(pattern, "dgm"));
-      const regex = regexes.get(pattern);
+      const regex = /** @type {RegExp} */ (regexes.get(pattern));
       regex.lastIndex = start;
-      match = regex.exec(node.data) || noMatch;
+      match = /** @type {Match | null} */ (regex.exec(node.data)) || noMatch;
       matches.set(pattern, match);
     }
 
-    return match.indices[0][0] < end && match.indices[0][1] <= end ? match : null;
+    return match.indices[0][0] < end && match.indices[0][1] <= end
+      ? /** @type {Match} */ (match)
+      : null;
   };
 
   /**
    * Resolve local, base, and external TextMate include references.
    * @param {string} include
-   * @param {Object} grammar
-   * @param {Object} baseGrammar
-   * @returns {{grammar: Object, rules: Object[]} | null}
+   * @param {Grammar} grammar
+   * @param {Grammar} baseGrammar
+   * @returns {{grammar: Grammar, rules: GrammarRule[]} | null}
    */
   const resolveInclude = (include, grammar, baseGrammar) => {
     if (include === "$self") return { grammar, rules: grammar.patterns };
@@ -197,13 +237,14 @@ export const highlightAll = async ({
 
   /**
    * Expand include rules into directly matchable rule contexts.
-   * @param {Object[]} rules
-   * @param {Object} grammar
-   * @param {Object} baseGrammar
+   * @param {GrammarRule[]} rules
+   * @param {Grammar} grammar
+   * @param {Grammar} baseGrammar
    * @param {Set<string>} [activeIncludes]
-   * @returns {{grammar: Object, rule: Object}[]}
+   * @returns {RuleContext[]}
    */
   const expandRules = (rules, grammar, baseGrammar, activeIncludes = new Set()) => {
+    /** @type {RuleContext[]} */
     const expanded = [];
 
     rules.forEach(rule => {
@@ -229,16 +270,17 @@ export const highlightAll = async ({
   /**
    * Select the rule with the earliest match in a text region.
    * @param {Text} node
-   * @param {{grammar: Object, rule: Object}[]} contexts
+   * @param {RuleContext[]} contexts
    * @param {number} start
    * @param {number} end
-   * @returns {{grammar: Object, rule: Object, match: RegExpExecArray} | null}
+   * @returns {(RuleContext & {match: Match}) | null}
    */
   const nextRule = (node, contexts, start, end) => {
+    /** @type {(RuleContext & {match: Match}) | null} */
     let winner = null;
 
     contexts.forEach(context => {
-      const pattern = context.rule.match || context.rule.begin;
+      const pattern = /** @type {string} */ (context.rule.match || context.rule.begin);
       const match = exec(pattern, node, start, end);
       if (!match) return;
 
@@ -253,13 +295,13 @@ export const highlightAll = async ({
   /**
    * Scan a bounded text region, recursively handling begin/end rule pairs.
    * @param {Text} node
-   * @param {Object[]} rules
+   * @param {GrammarRule[]} rules
    * @param {number} start
    * @param {number} end
-   * @param {Object} grammar
-   * @param {Object} [baseGrammar]
+   * @param {Grammar} grammar
+   * @param {Grammar} [baseGrammar]
    * @param {{pattern: string, applyEndPatternLast?: boolean} | null} [closing]
-   * @returns {{contentEnd: number, end: number, match: RegExpExecArray | null}}
+   * @returns {{contentEnd: number, end: number, match: Match | null}}
    */
   const scanRegion = (node, rules, start, end, grammar, baseGrammar = grammar, closing = null) => {
     const contexts = expandRules(rules, grammar, baseGrammar);
@@ -271,7 +313,7 @@ export const highlightAll = async ({
       const candidateStart = candidate?.match.indices[0][0] ?? Infinity;
       const endStart = endMatch?.indices[0][0] ?? Infinity;
 
-      if (endMatch && (endStart < candidateStart || (endStart === candidateStart && !closing.applyEndPatternLast))) {
+      if (endMatch && (endStart < candidateStart || (endStart === candidateStart && !closing?.applyEndPatternLast))) {
         return { contentEnd: endStart, end: endMatch.indices[0][1], match: endMatch };
       }
 
@@ -292,7 +334,7 @@ export const highlightAll = async ({
         end,
         ruleGrammar,
         baseGrammar,
-        { pattern: expandEnd(rule.end, match), applyEndPatternLast: rule.applyEndPatternLast }
+        { pattern: expandEnd(/** @type {string} */ (rule.end), match), applyEndPatternLast: rule.applyEndPatternLast }
       );
 
       if (rule.name) addRange(node, match.indices[0][0], nested.end, rule.name);
@@ -311,7 +353,7 @@ export const highlightAll = async ({
     if (!grammar) return;
 
     codeBlock.normalize();
-    const node = codeBlock.firstChild;
+    const node = /** @type {Text | null} */ (codeBlock.firstChild);
     if (node?.nodeType !== Node.TEXT_NODE || node.nextSibling) return;
 
     matches = new Map();

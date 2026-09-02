@@ -94,7 +94,7 @@ const getSizes = path => {
 
 const listing = dir =>
   readdirSync(join(root, dir))
-    .filter(name => !name.startsWith("index."))
+    .filter(name => !name.startsWith("index.") && !name.endsWith(".d.ts"))
     .sort()
     .map(name => join(dir, name));
 
