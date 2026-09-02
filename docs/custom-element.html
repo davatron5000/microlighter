@@ -44,6 +44,7 @@
   <link rel="stylesheet" data-href="./microlighter/themes/min.css" data-syntax-theme="min" disabled>
   <link rel="stylesheet" data-href="./microlighter/themes/cobalt2.css" data-syntax-theme="cobalt2" disabled>
   <link rel="stylesheet" data-href="./microlighter/themes/tokyo-night.css" data-syntax-theme="tokyo-night" disabled>
+  <link rel="stylesheet" data-href="./microlighter/themes/gruvbox.css" data-syntax-theme="gruvbox" disabled>
   <script>setSyntaxTheme(document.documentElement.dataset.syntaxTheme);</script>
   <link rel="stylesheet" href="./global.css">
   <style>
@@ -192,7 +193,7 @@
     <div class="theme-controls">
       <label class="theme-control">
         Syntax theme
-        <select id="theme">
+        <select id="theme" onchange="reRenderExample()">
           <button>
             <selectedcontent></selectedcontent>
             <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9l6 6l6-6"/></svg>
@@ -207,6 +208,7 @@
           <option value="min">Min</option>
           <option value="cobalt2">Cobalt2</option>
           <option value="tokyo-night">Tokyo Night</option>
+          <option value="gruvbox">Gruvbox</option>
         </select>
       </label>
       <div class="theme-actions">
@@ -239,7 +241,8 @@
       </div>
       <div class="install-steps">
         <p>Load a theme, set its scope wherever it belongs on your page, and import the custom element.</p>
-        <pre><code class="language-html">&lt;html data-syntax-theme="github"&gt;
+        <micro-lighter language="html" controls="copy">
+          <pre><code id="themed-example">&lt;html data-syntax-theme="github"&gt;
   &lt;head&gt;
     &lt;link rel="stylesheet" href="./microlighter/themes/github.css"&gt;
     &lt;script type="module" src="./microlighter/micro-lighter-element.min.js"&gt;&lt;/script&gt;
@@ -251,6 +254,7 @@
     &lt;/micro-lighter&gt;
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
+        </micro-lighter>
       </div>
     </section>
 
@@ -363,6 +367,20 @@ micro-lighter::part(line-numbers) {
     colorSchemeToggle.addEventListener("click", () => {
       setColorScheme(document.documentElement.dataset.colorScheme === "dark" ? "light" : "dark");
     });
+    function reRenderExample(){
+      document.getElementById("themed-example").innerHTML = `&lt;html data-syntax-theme="${themeSelect.value}"&gt;
+  &lt;head&gt;
+    &lt;link rel="stylesheet" href="./microlighter/themes/${themeSelect.value}.css"&gt;
+    &lt;script type="module" src="./microlighter/micro-lighter-element.min.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;micro-lighter language="javascript" controls="copy" line-numbers&gt;
+      &lt;pre&gt;&lt;code&gt;customElements.define("spicy-iframe", class extends HTMLElement {});&lt;/code&gt;&lt;/pre&gt;
+    &lt;/micro-lighter&gt;
+  &lt;/body&gt;
+&lt;/html&gt;`
+    }
   </script>
   <script type="module" src="./microlighter/micro-lighter-element.min.js"></script>
 </body>
