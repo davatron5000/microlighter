@@ -352,6 +352,7 @@ export function YetAnotherTodoApp(): JSX.Element {
             <li data-lang="javascript">JavaScript</li>
             <li data-lang="typescript">TypeScript</li>
             <li data-lang="tsx">TSX</li>
+            <li data-lang="astro">Astro</li>
             <li data-lang="svelte">Svelte</li>
             <li data-lang="vue">Vue</li>
             <li data-lang="heex">HEEx</li>
@@ -431,6 +432,17 @@ section .text
 _start:
     mov eax, 1
     int 0x80</code></pre>
+      </template>
+      <template data-lang="astro" data-label="Astro">
+        <pre><code class="language-astro">---
+const greeting = "Hello";
+---
+
+&lt;h1&gt;{greeting}, World!&lt;/h1&gt;
+
+&lt;style&gt;
+  h1 { color: royalblue; }
+&lt;/style&gt;</code></pre>
       </template>
       <template data-lang="bash" data-label="Bash">
         <pre><code class="language-bash">#!/usr/bin/env bash

@@ -28,6 +28,15 @@ section .text
 _start:
     mov eax, 1
     int 0x80</code></pre>
+    <pre><code class="language-astro">---
+const greeting = "Hello";
+---
+
+&lt;h1&gt;{greeting}, World!&lt;/h1&gt;
+
+&lt;style&gt;
+  h1 { color: royalblue; }
+&lt;/style&gt;</code></pre>
     <pre><code class="language-bash">#!/usr/bin/env bash
 set -euo pipefail
 
