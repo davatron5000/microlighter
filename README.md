@@ -172,7 +172,7 @@ Custom aliases passed to `highlightAll()` must point to a bundled language.
 
 MicroLighter includes these grammars:
 
-`assembly`, `bash`, `c`, `cpp`, `csharp`, `css`, `dart`, `dockerfile`, `elixir`,
+`assembly`, `astro`, `bash`, `c`, `cpp`, `csharp`, `css`, `dart`, `dockerfile`, `elixir`,
 `git-diff`, `go`, `graphql`, `heex`, `html`, `java`, `javascript`, `json`,
 `kotlin`, `lua`, `markdown`, `objective-c`, `perl`, `php`, `powershell`,
 `python`, `r`, `ruby`, `rust`, `scss`, `sql`, `svelte`, `swift`, `toml`, `tsx`,
