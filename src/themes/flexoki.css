@@ -40,7 +40,7 @@
   --ma: light-dark(#a02f6f, #ce5d97);
 }
 
-[data-syntax-theme="flexoki"] pre:has(code) {
+[data-syntax-theme="flexoki"] pre:has(code[class^="language-"], code[data-language]) {
   background-color: var(--syntax-background);
   color: var(--syntax-primary-text);
 }

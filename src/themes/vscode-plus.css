@@ -19,7 +19,7 @@
   color-scheme: light dark;
 }
 
-[data-syntax-theme="vscode-plus"] pre:has(code) {
+[data-syntax-theme="vscode-plus"] pre:has(code[class^="language-"], code[data-language]) {
   background-color: var(--syntax-background);
   color: var(--syntax-foreground);
 }
