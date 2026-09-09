@@ -191,4 +191,29 @@ const secondLine = false;</code></pre>
     await expect.poll(() => page.locator("#explicit code").getAttribute("data-language"))
       .toBe("python");
   });
+
+  test("keeps line numbers aligned when the page sets its own pre font-size", async ({ page }) => {
+    await page.goto("/docs/", { waitUntil: "networkidle" });
+
+    await page.evaluate(async () => {
+      await import("/docs/microlighter/micro-lighter-element.min.js");
+      document.body.insertAdjacentHTML("beforeend", `
+        <micro-lighter id="custom-font-size" line-numbers>
+          <pre style="font-size: 20px;"><code class="language-javascript">const one = 1;
+const two = 2;</code></pre>
+        </micro-lighter>
+      `);
+    });
+
+    await expect.poll(() => page.locator("#custom-font-size").evaluate(element => {
+      const gutter = element.shadowRoot.querySelector(".line-numbers");
+      const pre = element.querySelector("pre");
+      const gutterStyle = getComputedStyle(gutter);
+      const preStyle = getComputedStyle(pre);
+      return {
+        fontSizeMatches: gutterStyle.fontSize === preStyle.fontSize,
+        lineHeightMatches: gutterStyle.lineHeight === preStyle.lineHeight
+      };
+    })).toEqual({ fontSizeMatches: true, lineHeightMatches: true });
+  });
 });
