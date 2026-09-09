@@ -35,6 +35,19 @@ test("build emits complete custom-element bundles", async () => {
   assert.ok(bundle.length > minifiedBundle.length);
 });
 
+test("build emits declarations for every entry point", async () => {
+  const [grammar, minifiedBundle, minifiedElementBundle] = await Promise.all([
+    readFile(new URL("../dist/grammars/javascript.d.ts", import.meta.url), "utf8"),
+    readFile(new URL("../dist/microlighter.min.d.ts", import.meta.url), "utf8"),
+    readFile(new URL("../dist/micro-lighter-element.min.d.ts", import.meta.url), "utf8")
+  ]);
+
+  assert.match(grammar, /declare const grammar: Grammar;/);
+  assert.match(grammar, /export default grammar;/);
+  assert.match(minifiedBundle, /export \{\};/);
+  assert.match(minifiedElementBundle, /class MicroLighter extends HTMLElement/);
+});
+
 test("build whitespace-minifies grammar and theme files", async () => {
   const [grammar, theme] = await Promise.all([
     readFile(new URL("../dist/grammars/javascript.js", import.meta.url), "utf8"),

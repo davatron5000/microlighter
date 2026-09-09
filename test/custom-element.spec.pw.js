@@ -4,8 +4,8 @@ test.describe("MicroLighter custom element", () => {
   test("renders the custom element demo page", async ({ page }) => {
     await page.goto("/docs/custom-element.html", { waitUntil: "networkidle" });
 
-    await expect(page.locator("micro-lighter")).toHaveCount(3);
-    await expect(page.getByRole("button", { name: "Copy" })).toHaveCount(3);
+    await expect(page.locator("micro-lighter")).toHaveCount(4);
+    await expect(page.getByRole("button", { name: "Copy" })).toHaveCount(4);
 
     await expect.poll(() => page.evaluate(() => {
       let total = 0;

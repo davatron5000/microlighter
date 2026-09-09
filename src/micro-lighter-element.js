@@ -1,3 +1,4 @@
+/// <reference path="./global.d.ts" />
 import { highlightAll } from "./highlight.js";
 
 const template = document.createElement("template");
@@ -91,14 +92,21 @@ template.innerHTML = `
 export class MicroLighter extends HTMLElement {
   static observedAttributes = ["controls", "language", "line-numbers"];
 
+  /** @type {HTMLButtonElement} */
   #button;
-  #codeBlock;
+  /** @type {HTMLElement | null} */
+  #codeBlock = null;
   #languageOverridden = false;
+  /** @type {HTMLElement} */
   #lineNumbers;
+  /** @type {() => void} */
   #onResize;
   #observer;
-  #originalLanguage;
-  #pre;
+  /** @type {string | null} */
+  #originalLanguage = null;
+  /** @type {HTMLElement | null} */
+  #pre = null;
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
   #resetCopyLabel;
   #resizeObserver;
 
@@ -106,10 +114,11 @@ export class MicroLighter extends HTMLElement {
     super();
     const shadow = this.attachShadow({ mode: "open" });
     shadow.append(template.content.cloneNode(true));
-    this.#button = shadow.querySelector("button");
-    this.#lineNumbers = shadow.querySelector(".line-numbers");
+    this.#button = /** @type {HTMLButtonElement} */ (shadow.querySelector("button"));
+    this.#lineNumbers = /** @type {HTMLElement} */ (shadow.querySelector(".line-numbers"));
     this.#button.addEventListener("click", () => this.#copy());
-    shadow.querySelector("slot").addEventListener("slotchange", () => this.#update());
+    /** @type {HTMLSlotElement} */ (shadow.querySelector("slot"))
+      .addEventListener("slotchange", () => this.#update());
     this.#observer = new MutationObserver(() => this.#update());
     this.#onResize = () => this.#alignLineNumbers();
     this.#resizeObserver = new ResizeObserver(() => this.#alignLineNumbers());
@@ -141,7 +150,7 @@ export class MicroLighter extends HTMLElement {
   async #copy() {
     if (!this.#codeBlock) return;
 
-    await navigator.clipboard.writeText(this.#codeBlock.textContent);
+    await navigator.clipboard.writeText(this.#codeBlock.textContent ?? "");
     this.#button.textContent = "Copied";
     this.#button.ariaNotify?.("Copied to clipboard");
 
@@ -152,8 +161,10 @@ export class MicroLighter extends HTMLElement {
   }
 
   #update() {
-    const codeBlock = this.querySelector(":scope > pre > code");
-    const pre = codeBlock?.parentElement;
+    const codeBlock = /** @type {HTMLElement | null} */ (
+      this.querySelector(":scope > pre > code")
+    );
+    const pre = /** @type {HTMLElement | null} */ (codeBlock?.parentElement ?? null);
 
     if (this.#codeBlock !== codeBlock) {
       this.#restoreLanguage();
@@ -191,7 +202,7 @@ export class MicroLighter extends HTMLElement {
       return;
     }
 
-    const lineCount = this.#codeBlock.textContent.split(/\r\n?|\n/).length;
+    const lineCount = (this.#codeBlock.textContent ?? "").split(/\r\n?|\n/).length;
     this.#alignLineNumbers();
     this.#lineNumbers.textContent = Array.from(
       { length: lineCount },
@@ -207,6 +218,7 @@ export class MicroLighter extends HTMLElement {
     this.#lineNumbers.style.paddingBlockStart = preStyle.paddingBlockStart;
   }
 
+  /** @param {string} name */
   #hasControl(name) {
     return (this.getAttribute("controls") || "")
       .split(/[\s,]+/)

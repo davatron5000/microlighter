@@ -13,7 +13,7 @@ your markup stays clean and editable.
 
 - About 2 KiB compressed
 - No runtime dependencies
-- 35 languages, loaded on demand
+- 37 languages, loaded on demand
 - 10 bundled themes
 - Clean DOM with no token markup
 - Programmatic, automatic, and web component APIs
@@ -134,6 +134,21 @@ Import the optional `<micro-lighter>` custom element:
 
 Style the controls with `::part(copy-button)` and `::part(line-numbers)`.
 
+### TypeScript
+
+Declarations ship with the package, including for the grammar and auto-run
+entry points. They are generated from the JSDoc types in `src/`, so the source
+and the published types cannot drift.
+
+```ts
+import { highlightAll, type HighlightAllOptions } from "microlighter";
+import javascript from "microlighter/grammars/javascript.js";
+```
+
+Importing `microlighter/micro-lighter-element.js` also registers
+`<micro-lighter>` in `HTMLElementTagNameMap`, so `querySelector`
+returns a typed element.
+
 ## Language detection
 
 The recommended format is a `language-*` class:
@@ -173,8 +188,8 @@ Custom aliases passed to `highlightAll()` must point to a bundled language.
 MicroLighter includes these grammars:
 
 `assembly`, `astro`, `bash`, `c`, `cpp`, `csharp`, `css`, `dart`, `dockerfile`, `elixir`,
-`git-diff`, `go`, `graphql`, `heex`, `html`, `java`, `javascript`, `json`,
-`kotlin`, `lua`, `markdown`, `objective-c`, `perl`, `php`, `powershell`,
+`git-diff`, `go`, `graphql`, `heex`, `html`, `ini`, `java`, `javascript`, `json`,
+`kotlin`, `lua`, `markdown`, `nginx`, `objective-c`, `perl`, `php`, `powershell`,
 `python`, `r`, `ruby`, `rust`, `scss`, `sql`, `svelte`, `swift`, `toml`, `tsx`,
 `typescript`, `vue`, and `yaml`.
 
