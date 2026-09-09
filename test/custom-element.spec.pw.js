@@ -191,4 +191,16 @@ const secondLine = false;</code></pre>
     await expect.poll(() => page.locator("#explicit code").getAttribute("data-language"))
       .toBe("python");
   });
+
+  test("keeps its grid track inside the container's width when line-numbers is absent", async ({ page }) => {
+    await page.goto("/test/fixtures/no-line-numbers-width.html", { waitUntil: "networkidle" });
+
+    await expect.poll(() => page.evaluate(() => {
+      const container = document.querySelector("#container");
+      const pre = document.querySelector("#no-line-numbers pre");
+      const containerRight = container.getBoundingClientRect().right;
+      const preRight = pre.getBoundingClientRect().right;
+      return preRight <= containerRight + 1;
+    })).toBe(true);
+  });
 });
