@@ -77,6 +77,24 @@ test.describe("Grammar exhaustive fixture (test/fixtures/grammar-exhaustive.html
     }
   });
 
+  test("distinguishes regex syntax instead of coloring every token as regexp", async ({ page }) => {
+    await page.goto(FIXTURE, { waitUntil: "networkidle" });
+
+    const tokens = await page.evaluate(() => {
+      const code = document.querySelector("code.language-regex");
+      return Object.fromEntries([...CSS.highlights].map(([category, ranges]) => [
+        category,
+        [...ranges].filter(range => code.contains(range.startContainer)).map(range => range.toString())
+      ]));
+    });
+
+    expect(tokens.keyword).toEqual(expect.arrayContaining(["^", "+", "{2,5}"]));
+    expect(tokens.variable).toContain("word");
+    expect(tokens.punctuation).toEqual(expect.arrayContaining(["[", "]", ")"]));
+    expect(tokens.constant).toEqual(expect.arrayContaining(["\\s", "\\d"]));
+    expect(tokens.regexp ?? []).toEqual([]);
+  });
+
   test("categorizes inserted and deleted git-diff lines correctly", async ({ page }) => {
     await page.goto(FIXTURE, { waitUntil: "networkidle" });
 

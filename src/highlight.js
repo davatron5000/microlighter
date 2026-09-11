@@ -81,9 +81,10 @@ const getCategory = scope => {
   if (scope.startsWith("support.type.property-name")) return "property";
   if (parts.includes("attribute-value")) return "attribute-value";
   if (scope.startsWith("string.other.link")) return "link";
+  if (scope.startsWith("string.regexp")) return "regexp";
 
   if ([
-    "doctype", "at-rule", "important", "regexp", "boolean",
+    "doctype", "at-rule", "important", "boolean",
     "symbol", "operator", "attribute-name"
   ].includes(last)) return last;
 

@@ -17,6 +17,7 @@ const languageAliases = {
   md: "markdown",
   py: "python",
   rb: "ruby",
+  regexp: "regex",
   sass: "scss",
   sh: "bash",
   shell: "bash",
@@ -49,9 +50,8 @@ export const getExternalLanguages = value => {
     if (Array.isArray(item)) {
       item.forEach(visit);
     } else if (item && typeof item === "object") {
-      if (typeof item.include === "string" && !/^[#$]/.test(item.include)) {
-        const scope = item.include.split("#")[0];
-        const match = scope.match(/^(?:source|text)\.([a-z0-9_-]+)/);
+      if (typeof item.include === "string") {
+        const match = item.include.match(/^(?:source|text)\.([a-z0-9_-]+)/);
         if (match) languages.add(match[1]);
       }
       Object.values(item).forEach(visit);

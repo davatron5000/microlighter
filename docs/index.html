@@ -391,6 +391,7 @@ export function YetAnotherTodoApp(): JSX.Element {
             <li data-lang="powershell">PowerShell</li>
             <li data-lang="lua">Lua</li>
             <li data-lang="r">R</li>
+            <li data-lang="regex">Regex</li>
           </ul>
         </div>
         <div class="language-group">
@@ -620,6 +621,9 @@ function Invoke-Build {
 tokenize &lt;- function(source) {
   strsplit(source, " ")
 }</code></pre>
+      </template>
+      <template data-lang="regex" data-label="Regex">
+        <pre><code class="language-regex">^(?&lt;word&gt;[A-Za-z]+)\s+\k&lt;word&gt;(?=\s|$)(?:\s+\d{2,5})?$</code></pre>
       </template>
       <template data-lang="ruby" data-label="Ruby">
         <pre><code class="language-ruby"># Count tokens in a source string
