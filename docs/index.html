@@ -121,7 +121,7 @@
       <article class="feature">
         <span class="feature-index" aria-hidden="true">02</span>
         <div class="feature-specimen size-specimen" aria-hidden="true">
-          <span class="size-value">2.09</span><span class="size-unit">kb<br>gzip</span>
+          <span class="size-value">2.10</span><span class="size-unit">kb<br>gzip</span>
         </div>
         <h2>Blazingly fast!!</h2>
       </article>
@@ -399,6 +399,7 @@ export function YetAnotherTodoApp(): JSX.Element {
             <li data-lang="json">JSON</li>
             <li data-lang="yaml">YAML</li>
             <li data-lang="toml">TOML</li>
+            <li data-lang="ron">RON</li>
             <li data-lang="sql">SQL</li>
             <li data-lang="markdown">Markdown</li>
             <li data-lang="graphql">GraphQL</li>
@@ -626,6 +627,22 @@ tokenize &lt;- function(source) {
 def tokenize(source)
   source.split(" ")
 end</code></pre>
+      </template>
+      <template data-lang="ron" data-label="RON">
+        <pre><code class="language-ron">// Syntax highlighter settings
+Config(
+  title: "MicroLighter\n",
+  initial: Some('M'),
+  raw: r#"not \escaped"#,
+  enabled: true,
+  retries: 3,
+  ratio: -1.25e+2,
+  labels: {
+    "syntax": r#"highlighting"#,
+    fallback: None,
+  },
+  /* Keep unknown fields for future versions. */
+)</code></pre>
       </template>
       <template data-lang="rust" data-label="Rust">
         <pre><code class="language-rust">/// A scoped span of source text.
