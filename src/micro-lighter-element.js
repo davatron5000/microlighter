@@ -6,6 +6,7 @@ template.innerHTML = `
   <style>
     :host {
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       position: relative;
     }
 

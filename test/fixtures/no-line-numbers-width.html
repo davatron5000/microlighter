@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" data-syntax-theme="github">
+<head>
+  <meta charset="utf-8">
+  <title>MicroLighter no-line-numbers width fixture</title>
+  <!--
+    Not published to docs/: this fixture exists only to verify, in a real
+    browser, that the custom element's own grid layout stays inside its
+    container's width when line-numbers is absent and a code line is
+    longer than the container (see issue #25). With line-numbers, `:host`
+    already gets `grid-template-columns: max-content minmax(0, 1fr)`, so
+    the pre's grid track shrinks to fit; without line-numbers there was no
+    such track function at all, so the implicit column (and the pre inside
+    it) grew to the content's width instead of the container's.
+  -->
+  <link rel="stylesheet" href="../../docs/microlighter/themes/index.css">
+  <style>
+    #container {
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <micro-lighter id="no-line-numbers">
+      <pre><code class="language-javascript">const veryLongUnbrokenLine = "this line is intentionally long enough to overflow a 300px container if the grid track is not constrained to it";</code></pre>
+    </micro-lighter>
+  </div>
+  <script type="module" src="../../docs/microlighter/micro-lighter-element.min.js"></script>
+</body>
+</html>
