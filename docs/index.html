@@ -121,7 +121,7 @@
       <article class="feature">
         <span class="feature-index" aria-hidden="true">02</span>
         <div class="feature-specimen size-specimen" aria-hidden="true">
-          <span class="size-value">2.09</span><span class="size-unit">kb<br>gzip</span>
+          <span class="size-value">2.10</span><span class="size-unit">kb<br>gzip</span>
         </div>
         <h2>Blazingly fast!!</h2>
       </article>
@@ -347,6 +347,7 @@ export function YetAnotherTodoApp(): JSX.Element {
           <h3>Web</h3>
           <ul>
             <li data-lang="html">HTML</li>
+            <li data-lang="xml">XML</li>
             <li data-lang="css">CSS</li>
             <li data-lang="scss">SCSS</li>
             <li data-lang="javascript">JavaScript</li>
@@ -690,6 +691,20 @@ const count = ref(0)
 &lt;/script&gt;
 
 &lt;button @click="count++"&gt;Count: {{ count }}&lt;/button&gt;</code></pre>
+      </template>
+      <template data-lang="xml" data-label="XML">
+        <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE catalog [
+  &lt;!ENTITY publisher "MicroLighter Press"&gt;
+]&gt;
+&lt;!-- Namespaced inventory feed --&gt;
+&lt;catalog xmlns:book="urn:example:books"&gt;
+  &lt;book:item id="bk-42" available="true"&gt;
+    &lt;title&gt;Syntax &amp;amp; Semantics by &amp;publisher;&lt;/title&gt;
+    &lt;summary&gt;&lt;![CDATA[Use &lt;tokens&gt; safely.]]&gt;&lt;/summary&gt;
+    &lt;book:cover href="cover.jpg" /&gt;
+  &lt;/book:item&gt;
+&lt;/catalog&gt;</code></pre>
       </template>
       <template data-lang="yaml" data-label="YAML">
         <pre><code class="language-yaml">name: CI
