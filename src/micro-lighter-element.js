@@ -214,6 +214,7 @@ export class MicroLighter extends HTMLElement {
   #alignLineNumbers() {
     if (!this.#pre || !this.hasAttribute("line-numbers")) return;
     const preStyle = getComputedStyle(this.#pre);
+    this.#lineNumbers.style.fontSize = preStyle.fontSize;
     this.#lineNumbers.style.lineHeight = preStyle.lineHeight;
     this.#lineNumbers.style.paddingBlockStart = preStyle.paddingBlockStart;
   }
