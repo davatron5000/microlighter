@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
+    "recheck": "^4.5.0",
     "typescript": "^7.0.2"
   },
   "engines": {

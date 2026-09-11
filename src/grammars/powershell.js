@@ -23,7 +23,7 @@ export default {
     strings: {
       patterns: [
         { match: "'(?:''|[^'])*'", name: "string.quoted.single" },
-        { match: "\"(?:`.|[^\"])*\"", name: "string.quoted.double" }
+        { match: "\"(?:`[\\s\\S]|[^\"`])*\"", name: "string.quoted.double" }
       ]
     },
     variables: {

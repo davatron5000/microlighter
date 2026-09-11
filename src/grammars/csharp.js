@@ -24,9 +24,9 @@ export default {
     strings: {
       patterns: [
         { match: "@\"(?:\"\"|[^\"])*\"", name: "string.quoted.double.verbatim" },
-        { match: "\\$@\"(?:\"\"|\\{\\{|\\}\\}|[^\"])*\"", name: "string.quoted.double.interpolated" },
-        { match: "@\\$\"(?:\"\"|\\{\\{|\\}\\}|[^\"])*\"", name: "string.quoted.double.interpolated" },
-        { match: "\\$\"(?:\\\\.|\\{\\{|\\}\\}|[^\"\\\\\\r\\n])*\"", name: "string.quoted.double.interpolated" },
+        { match: "\\$@\"(?:\"\"|[^\"])*\"", name: "string.quoted.double.interpolated" },
+        { match: "@\\$\"(?:\"\"|[^\"])*\"", name: "string.quoted.double.interpolated" },
+        { match: "\\$\"(?:\\\\.|[^\"\\\\\\r\\n])*\"", name: "string.quoted.double.interpolated" },
         { match: "\"(?:\\\\.|[^\"\\\\\\r\\n])*\"", name: "string.quoted.double" },
         { match: "'(?:\\\\.|[^'\\\\\\r\\n])'", name: "string.quoted.char" }
       ]
