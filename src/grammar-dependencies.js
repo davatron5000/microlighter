@@ -21,6 +21,7 @@ const languageAliases = {
   sh: "bash",
   shell: "bash",
   ts: "typescript",
+  vto: "vento",
   yml: "yaml",
   zsh: "bash"
 };

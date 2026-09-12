@@ -121,7 +121,7 @@
       <article class="feature">
         <span class="feature-index" aria-hidden="true">02</span>
         <div class="feature-specimen size-specimen" aria-hidden="true">
-          <span class="size-value">2.09</span><span class="size-unit">kb<br>gzip</span>
+          <span class="size-value">2.10</span><span class="size-unit">kb<br>gzip</span>
         </div>
         <h2>Blazingly fast!!</h2>
       </article>
@@ -354,6 +354,7 @@ export function YetAnotherTodoApp(): JSX.Element {
             <li data-lang="tsx">TSX</li>
             <li data-lang="astro">Astro</li>
             <li data-lang="svelte">Svelte</li>
+            <li data-lang="vento">Vento</li>
             <li data-lang="vue">Vue</li>
             <li data-lang="heex">HEEx</li>
           </ul>
@@ -690,6 +691,18 @@ const count = ref(0)
 &lt;/script&gt;
 
 &lt;button @click="count++"&gt;Count: {{ count }}&lt;/button&gt;</code></pre>
+      </template>
+      <template data-lang="vento" data-label="Vento">
+        <pre><code class="language-vento">---
+buttonText: "click here"
+buttonClass: ["foo"]
+---
+{{> const showButton = buttonText?.trim() }}
+{{ if showButton }}
+{{# Vento {{ comment code }} #}}
+&lt;!-- HTML code --&gt;
+&lt;button class="{{ buttonClass.join(" ") |> trim() }}"&gt;{{ buttonText.trim().toUpperCase() }}&lt;/button&gt;
+{{ /if }}</code></pre>
       </template>
       <template data-lang="yaml" data-label="YAML">
         <pre><code class="language-yaml">name: CI
