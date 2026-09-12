@@ -204,6 +204,16 @@ rollup = "4.46.2"</code></pre>
 }
 
 const answer: number = 42;</code></pre>
+    <pre><code class="language-vento">---
+buttonText: "click here"
+buttonClass: ["foo"]
+---
+{{> const showButton = buttonText?.trim() }}
+{{ if showButton }}
+{{# Vento {{ comment code }} #}}
+&lt;!-- HTML code --&gt;
+&lt;button class="{{ buttonClass.join(" ") |> trim() }}"&gt;{{ buttonText.trim().toUpperCase() }}&lt;/button&gt;
+{{ /if }}</code></pre>
     <pre><code class="language-vue">&lt;script setup&gt;
 const count = ref(0)
 &lt;/script&gt;
