@@ -62,12 +62,12 @@ Pass options to limit the scan or add project-specific language aliases:
 
 ```js
 await highlightAll({
-  root: document.querySelector("#docs"),
-  selector: "pre.code > code",
-  languageAliases: {
-    ecmascript: "javascript",
-    shellsession: "bash"
-  }
+ root: document.querySelector("#docs"),
+ selector: "pre.code > code",
+ languageAliases: {
+ ecmascript: "javascript",
+ shellsession: "bash"
+ }
 });
 ```
 
@@ -107,7 +107,7 @@ Use the auto runner directly from a CDN:
 <script type="module" src="https://cdn.jsdelivr.net/npm/microlighter@2/microlighter.min.js"></script>
 
 <body data-syntax-theme="github">
-  <pre><code class="language-javascript">const answer = 42;</code></pre>
+ <pre><code class="language-javascript">const answer = 42;</code></pre>
 </body>
 ```
 
@@ -120,9 +120,9 @@ Import the optional `<micro-lighter>` custom element:
 <script type="module" src="./node_modules/microlighter/micro-lighter-element.min.js"></script>
 
 <body data-syntax-theme="github">
-  <micro-lighter language="javascript" controls="copy" line-numbers>
-    <pre><code>const answer = 42;</code></pre>
-  </micro-lighter>
+ <micro-lighter language="javascript" controls="copy" line-numbers>
+ <pre><code>const answer = 42;</code></pre>
+ </micro-lighter>
 </body>
 ```
 
@@ -204,7 +204,7 @@ any container:
 <link rel="stylesheet" href="./node_modules/microlighter/themes/night-owl.css">
 
 <section data-syntax-theme="night-owl">
-  <!-- code blocks -->
+ <!-- code blocks -->
 </section>
 ```
 
@@ -247,27 +247,27 @@ the highlighter after each change:
 
 ```html
 <editable-code>
-  <pre><code class="language-javascript">const answer = 42;</code></pre>
+ <pre><code class="language-javascript">const answer = 42;</code></pre>
 </editable-code>
 
 <script type="module">
-  import "microlighter/microlighter.min.js";
+ import "microlighter/microlighter.min.js";
 
-  class EditableCode extends HTMLElement {
-    connectedCallback() {
-      const code = this.querySelector("pre > code");
-      if (!code) return;
+ class EditableCode extends HTMLElement {
+ connectedCallback() {
+ const code = this.querySelector("pre > code");
+ if (!code) return;
 
-      code.contentEditable = "plaintext-only";
-      code.spellcheck = false;
-      code.setAttribute("aria-label", "Editable code");
-      this.addEventListener("input", () => {
-        this.dispatchEvent(new Event("syntax-highlight", { bubbles: true }));
-      });
-    }
-  }
+ code.contentEditable = "plaintext-only";
+ code.spellcheck = false;
+ code.setAttribute("aria-label", "Editable code");
+ this.addEventListener("input", () => {
+ this.dispatchEvent(new Event("syntax-highlight", { bubbles: true }));
+ });
+ }
+ }
 
-  customElements.define("editable-code", EditableCode);
+ customElements.define("editable-code", EditableCode);
 </script>
 ```
 
@@ -320,10 +320,10 @@ highlighting community:
 - [Prism.js][prism] inspired the semantic CSS categories.
 - [Shiki][shiki] is the full-featured TextMate highlighter for the web.
 - [Bramus Van Damme's Custom Highlight API article][bramus] popularized this
-  rendering technique.
+ rendering technique.
 - Related projects include [textmate-highlighter][tmh],
-  [syntax-highlight-element][she], [shiki-highlight-api][sha], and
-  [syntaxp][syntaxp].
+ [syntax-highlight-element][she], [shiki-highlight-api][sha], and
+ [syntaxp][syntaxp].
 
 ## License
 
