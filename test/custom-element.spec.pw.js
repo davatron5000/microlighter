@@ -75,6 +75,15 @@ const secondLine = false;</code></pre>
         <micro-lighter id="many-lines" line-numbers>
           <pre><code></code></pre>
         </micro-lighter>
+        <micro-lighter
+          id="localized"
+          controls="copy"
+          copy-label="Copier"
+          copied-label="Copié"
+          copied-announcement="Copié dans le presse-papiers"
+        >
+          <pre><code>const localized = true;</code></pre>
+        </micro-lighter>
       `);
       document.querySelector("#many-lines code").textContent = Array.from(
         { length: 1000 },
@@ -148,6 +157,15 @@ const secondLine = false;</code></pre>
       writes: ["const explicit = true;"]
     });
     await expect(page.locator("#inferred button")).toBeHidden();
+
+    // copy-label / copied-label / copied-announcement let a page translate the
+    // copy button instead of being stuck with the hardcoded English strings.
+    await expect(page.locator("#localized button")).toHaveText("Copier");
+    await page.locator("#localized button").click();
+    await expect(page.locator("#localized button")).toHaveText("Copié");
+    expect(await page.evaluate(() => window.notifications)).toContain(
+      "Copié dans le presse-papiers"
+    );
 
     expect(await page.locator("#inferred").evaluate(element => {
       const gutter = element.shadowRoot.querySelector(".line-numbers");

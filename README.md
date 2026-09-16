@@ -131,6 +131,9 @@ Import the optional `<micro-lighter>` custom element:
 | `language` | Language to use. Overrides language metadata on `<pre>` or `<code>` |
 | `controls="copy"` | Adds a copy button |
 | `line-numbers` | Adds a line number gutter without changing copied code |
+| `copy-label` | Text for the copy button. Defaults to `Copy` |
+| `copied-label` | Text the copy button shows after a click. Defaults to `Copied` |
+| `copied-announcement` | Message announced to screen readers after a click. Defaults to `Copied to clipboard` |
 
 Style the controls with `::part(copy-button)` and `::part(line-numbers)`.
 
