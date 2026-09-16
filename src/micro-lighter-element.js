@@ -90,7 +90,14 @@ template.innerHTML = `
 `;
 
 export class MicroLighter extends HTMLElement {
-  static observedAttributes = ["controls", "language", "line-numbers"];
+  static observedAttributes = [
+    "controls",
+    "copied-announcement",
+    "copied-label",
+    "copy-label",
+    "language",
+    "line-numbers"
+  ];
 
   /** @type {HTMLButtonElement} */
   #button;
@@ -109,6 +116,10 @@ export class MicroLighter extends HTMLElement {
   /** @type {ReturnType<typeof setTimeout> | undefined} */
   #resetCopyLabel;
   #resizeObserver;
+  /** True while the button is showing its post-copy label, so `#update` does
+   * not overwrite it back to the copy label while the reset timer is still
+   * pending. */
+  #showingCopied = false;
 
   constructor() {
     super();
@@ -151,13 +162,30 @@ export class MicroLighter extends HTMLElement {
     if (!this.#codeBlock) return;
 
     await navigator.clipboard.writeText(this.#codeBlock.textContent ?? "");
-    this.#button.textContent = "Copied";
-    this.#button.ariaNotify?.("Copied to clipboard");
+    this.#showingCopied = true;
+    this.#button.textContent = this.#copiedLabel();
+    this.#button.ariaNotify?.(this.#copiedAnnouncement());
 
     clearTimeout(this.#resetCopyLabel);
     this.#resetCopyLabel = setTimeout(() => {
-      this.#button.textContent = "Copy";
+      this.#showingCopied = false;
+      this.#button.textContent = this.#copyLabel();
     }, 2000);
+  }
+
+  /** @returns {string} */
+  #copyLabel() {
+    return this.getAttribute("copy-label") || "Copy";
+  }
+
+  /** @returns {string} */
+  #copiedLabel() {
+    return this.getAttribute("copied-label") || "Copied";
+  }
+
+  /** @returns {string} */
+  #copiedAnnouncement() {
+    return this.getAttribute("copied-announcement") || "Copied to clipboard";
   }
 
   #update() {
@@ -178,6 +206,7 @@ export class MicroLighter extends HTMLElement {
     }
 
     this.#button.hidden = !this.#hasControl("copy") || !codeBlock;
+    if (!this.#showingCopied) this.#button.textContent = this.#copyLabel();
 
     const language = this.getAttribute("language");
     if (codeBlock && language) {
