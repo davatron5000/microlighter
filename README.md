@@ -73,7 +73,7 @@ await highlightAll({
 
 | Option | Default | Description |
 | --- | --- | --- |
-| `root` | `document` | Element or document to search |
+| `root` | `document` | Element, document or shadow root to search. A pass forgets only the ranges inside its root, so separate roots highlight independently |
 | `selector` | `"pre > code"` | Selector used to find code blocks |
 | `languageAliases` | `{}` | Extra aliases mapped to bundled grammars |
 
