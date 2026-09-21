@@ -197,6 +197,61 @@ test.describe("MicroLighter demo site (docs/index.html)", () => {
     })).toEqual({ childNodes: 1, highlighted: true });
   });
 
+  test("scanning one root leaves the ranges registered in other roots alone", async ({ page }) => {
+    await page.goto(HOMEPAGE, { waitUntil: "networkidle" });
+
+    const counts = await page.evaluate(async () => {
+      const { highlightAll } = await import("/docs/microlighter/index.js");
+
+      const mount = () => {
+        const host = document.createElement("div");
+        const pre = document.createElement("pre");
+        const code = document.createElement("code");
+        code.className = "language-javascript";
+        code.textContent = "const answer = 42;";
+        pre.append(code);
+        host.attachShadow({ mode: "open" }).append(pre);
+        document.body.append(host);
+        return { host, code };
+      };
+      const count = code => {
+        let total = 0;
+        for (const highlight of CSS.highlights.values()) {
+          for (const range of highlight) {
+            if (range.startContainer.parentElement === code) total += 1;
+          }
+        }
+        return total;
+      };
+
+      const first = mount();
+      const second = mount();
+
+      await highlightAll({ root: first.host.shadowRoot });
+      const afterFirst = count(first.code);
+
+      await highlightAll({ root: second.host.shadowRoot });
+      const afterSecond = [count(first.code), count(second.code)];
+
+      await highlightAll();
+      const afterDocument = [count(first.code), count(second.code)];
+
+      first.host.remove();
+      await highlightAll({ root: second.host.shadowRoot });
+      const afterRemoval = [count(first.code), count(second.code)];
+
+      return { afterFirst, afterSecond, afterDocument, afterRemoval };
+    });
+
+    expect(counts.afterFirst).toBeGreaterThan(0);
+    // A pass on another root keeps this one's ranges
+    expect(counts.afterSecond).toEqual([counts.afterFirst, counts.afterFirst]);
+    // A document pass cannot see into either shadow root, and leaves both alone
+    expect(counts.afterDocument).toEqual(counts.afterSecond);
+    // Ranges into a detached tree are dropped by whichever pass runs next
+    expect(counts.afterRemoval).toEqual([0, counts.afterFirst]);
+  });
+
   test("accepts built-in and custom language aliases through the import API", async ({ page }) => {
     await page.goto(HOMEPAGE, { waitUntil: "networkidle" });
 

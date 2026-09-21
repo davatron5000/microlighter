@@ -178,9 +178,15 @@ export const highlightAll = async ({
   /** @type {Map<string, MatchOffsets>} */
   let matches = new Map();
 
-  highlights.forEach((ranges, category) => {
-    if (CSS.highlights.get(category) === ranges) CSS.highlights.delete(category);
-    ranges.clear();
+  // Forget only what this pass replaces: ranges inside the tree being scanned,
+  // and ranges whose nodes have since left the DOM. Ranges elsewhere stay
+  // registered, so scanning one root (a shadow root, say) leaves every other
+  // root highlighted.
+  highlights.forEach(ranges => {
+    ranges.forEach(range => {
+      const node = range.startContainer;
+      if (!node.isConnected || root.contains(node)) ranges.delete(range);
+    });
   });
 
   /**
@@ -363,6 +369,7 @@ export const highlightAll = async ({
 
   highlights.forEach((ranges, category) => {
     if (ranges.size) CSS.highlights.set(category, ranges);
+    else if (CSS.highlights.get(category) === ranges) CSS.highlights.delete(category);
   });
 
   return codeBlocks;
