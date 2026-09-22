@@ -121,7 +121,7 @@
       <article class="feature">
         <span class="feature-index" aria-hidden="true">02</span>
         <div class="feature-specimen size-specimen" aria-hidden="true">
-          <span class="size-value">2.09</span><span class="size-unit">kb<br>gzip</span>
+          <span class="size-value">2.10</span><span class="size-unit">kb<br>gzip</span>
         </div>
         <h2>Blazingly fast!!</h2>
       </article>
@@ -356,6 +356,7 @@ export function YetAnotherTodoApp(): JSX.Element {
             <li data-lang="svelte">Svelte</li>
             <li data-lang="vue">Vue</li>
             <li data-lang="heex">HEEx</li>
+            <li data-lang="handlebars">Handlebars</li>
           </ul>
         </div>
         <div class="language-group">
@@ -525,6 +526,13 @@ query GetToken($id: ID!) {
     scope
   }
 }</code></pre>
+      </template>
+      <template data-lang="handlebars" data-label="Handlebars">
+        <pre><code class="language-handlebars">{{! Render the greeting }}
+&lt;h1 class="{{#if isAdmin}}admin{{else}}user{{/if}}"&gt;
+  Hello, {{name}}!
+&lt;/h1&gt;
+{{&gt; footer variant="compact"}}</code></pre>
       </template>
       <template data-lang="heex" data-label="HEEx">
         <pre><code class="language-heex">&lt;%!-- Render the current count --%&gt;

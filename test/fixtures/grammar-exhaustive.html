@@ -95,6 +95,11 @@ query GetToken($id: ID!) {
     scope
   }
 }</code></pre>
+    <pre><code class="language-handlebars">{{! Render the greeting }}
+&lt;h1 class="{{#if isAdmin}}admin{{else}}user{{/if}}"&gt;
+  Hello, {{name}}!
+&lt;/h1&gt;
+{{&gt; footer variant="compact"}}</code></pre>
     <pre><code class="language-heex">&lt;%!-- Render the current count --%&gt;
 &lt;.button phx-click="increment" :if={@enabled}&gt;
   &lt;%= gettext "Count" %&gt;: {@count}

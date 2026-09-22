@@ -7,6 +7,7 @@ import {
   normalizeLanguage
 } from "../src/grammar-dependencies.js";
 import cpp from "../src/grammars/cpp.js";
+import handlebars from "../src/grammars/handlebars.js";
 import heex from "../src/grammars/heex.js";
 import html from "../src/grammars/html.js";
 import markdown from "../src/grammars/markdown.js";
@@ -65,6 +66,7 @@ test("reports dependencies used by the shipped grammars", () => {
   assert.deepEqual([...getExternalLanguages(tsx)], ["js", "ts"]);
   assert.deepEqual([...getExternalLanguages(objectiveC)], ["c"]);
   assert.deepEqual(heex.dependencies, ["html", "elixir"]);
+  assert.deepEqual(handlebars.dependencies, ["html"]);
   assert.deepEqual(svelte.dependencies, ["html", "css", "scss", "javascript", "typescript"]);
   assert.deepEqual(vue.dependencies, ["html", "css", "scss", "javascript", "typescript"]);
 });

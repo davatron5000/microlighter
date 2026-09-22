@@ -12,6 +12,7 @@
 const languageAliases = {
   docker: "dockerfile",
   gql: "graphql",
+  hbs: "handlebars",
   js: "javascript",
   jsx: "javascript",
   md: "markdown",
