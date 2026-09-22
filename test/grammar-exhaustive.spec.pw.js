@@ -138,4 +138,26 @@ test.describe("Grammar exhaustive fixture (test/fixtures/grammar-exhaustive.html
     expect(heexHighlights.functions).toContain("gettext");
     expect(heexHighlights.variables).toEqual(expect.arrayContaining(["@enabled", "@count"]));
   });
+
+  test("categorizes Handlebars block helpers, partials, and hash arguments", async ({ page }) => {
+    await page.goto(FIXTURE, { waitUntil: "networkidle" });
+
+    const handlebarsHighlights = await page.evaluate(() => {
+      const getRanges = category => [...CSS.highlights.get(category) ?? []]
+        .filter(range => range.startContainer.parentElement?.closest("code.language-handlebars"))
+        .map(range => range.toString());
+
+      return {
+        keywords: getRanges("keyword"),
+        variables: getRanges("variable"),
+        attributes: getRanges("attribute-name"),
+        comments: getRanges("comment")
+      };
+    });
+
+    expect(handlebarsHighlights.keywords).toEqual(expect.arrayContaining(["if", "else"]));
+    expect(handlebarsHighlights.variables).toEqual(expect.arrayContaining(["isAdmin", "name", "footer"]));
+    expect(handlebarsHighlights.attributes).toContain("variant");
+    expect(handlebarsHighlights.comments).toContain("{{! Render the greeting }}");
+  });
 });
