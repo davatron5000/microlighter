@@ -14,7 +14,7 @@ your markup stays clean and editable.
 - About 2 KiB compressed
 - No runtime dependencies
 - 37 languages, loaded on demand
-- 10 bundled themes
+- 12 bundled themes
 - Clean DOM with no token markup
 - Programmatic, automatic, and web component APIs
 - Editable code block support
@@ -210,6 +210,7 @@ any container:
 
 Bundled themes:
 
+- `boring-tomorrow`
 - `cobalt2`
 - `dracula`
 - `github`

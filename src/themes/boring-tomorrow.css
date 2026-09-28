@@ -1,0 +1,86 @@
+/* Reference: Boring Tomorrow by s-mage — https://github.com/s-mage/boring-tomorrow
+ * Ideas:
+ *   Use system colors https://drafts.csswg.org/css-color/#css-system-colors
+ *   Only highlight comments and diff
+ */
+[data-syntax-theme="boring-tomorrow"] {
+  --syntax-background: Canvas;
+  --syntax-foreground: CanvasText;
+  --syntax-comment: AccentColor;
+  --syntax-keyword: CanvasText;
+  --syntax-operator: CanvasText;
+  --syntax-string: CanvasText;
+  --syntax-constant: CanvasText;
+  --syntax-function: CanvasText;
+  --syntax-type: CanvasText;
+  --syntax-variable: CanvasText;
+  --syntax-property: CanvasText;
+  --syntax-tag: CanvasText;
+  --syntax-selector: CanvasText;
+  --syntax-inserted: AccentColor;
+  --syntax-inserted-text: AccentColorText;
+  --syntax-deleted: ActiveText;
+  --syntax-deleted-text: AccentColorText;
+
+  color-scheme: light dark;
+}
+
+[data-syntax-theme="boring-tomorrow"] pre:has(code) {
+  background-color: var(--syntax-background);
+  color: var(--syntax-foreground);
+}
+
+::highlight(comment),
+::highlight(quote) { color: var(--syntax-comment); }
+
+::highlight(keyword),
+::highlight(storage),
+::highlight(at-rule),
+::highlight(doctype),
+::highlight(important),
+::highlight(section) { color: var(--syntax-keyword); }
+
+::highlight(operator),
+::highlight(punctuation) { color: var(--syntax-operator); }
+
+::highlight(string),
+::highlight(regexp),
+::highlight(attribute-value),
+::highlight(link),
+::highlight(raw) { color: var(--syntax-string); }
+
+::highlight(numeric),
+::highlight(boolean),
+::highlight(constant),
+::highlight(symbol),
+::highlight(character-entity),
+::highlight(anchor),
+::highlight(entity) { color: var(--syntax-constant); }
+
+::highlight(function),
+::highlight(decorator),
+::highlight(animation) { color: var(--syntax-function); }
+
+::highlight(type),
+::highlight(support) { color: var(--syntax-type); }
+
+::highlight(variable),
+::highlight(interpolation) { color: var(--syntax-variable); }
+
+::highlight(property),
+::highlight(key),
+::highlight(attribute-name) { color: var(--syntax-property); }
+
+::highlight(tag) { color: var(--syntax-tag); }
+
+::highlight(selector) { color: var(--syntax-selector); }
+
+::highlight(inserted) {
+  background-color: var(--syntax-inserted);
+  color: var(--syntax-inserted-text);
+}
+
+::highlight(deleted) {
+  background-color: var(--syntax-deleted);
+  color: var(--syntax-deleted-text);
+}
