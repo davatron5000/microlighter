@@ -1,0 +1,394 @@
+import { EmulatedRegExp } from "oniguruma-to-es";
+
+export default {
+  name: "viml",
+  displayName: "Vim Script",
+  aliases: [
+    "vim",
+    "vimscript"
+  ],
+  scopeName: "source.viml",
+  patterns: [
+    { include: "#comment" },
+    { include: "#constant" },
+    { include: "#entity" },
+    { include: "#keyword" },
+    { include: "#punctuation" },
+    { include: "#storage" },
+    { include: "#strings" },
+    { include: "#support" },
+    { include: "#variable" },
+    { include: "#syntax" },
+    { include: "#commands" },
+    { include: "#option" },
+    { include: "#map" }
+  ],
+  repository: {
+    commands: {
+      patterns: [
+        {
+          match: /\bcom([\!\p{space}])/dgv,
+          name: "storage.other.command.viml"
+        },
+        {
+          match: /\bau([\!\p{space}])/dgv,
+          name: "storage.other.command.viml"
+        },
+        {
+          match: /-bang/dgv,
+          name: "storage.other.command.bang.viml"
+        },
+        {
+          match: /-nargs=[\*\+0-9]+/dgv,
+          name: "storage.other.command.args.viml"
+        },
+        {
+          match: /-complete=\P{space}+/dgv,
+          name: "storage.other.command.completion.viml"
+        },
+        {
+          begin: /(aug(roup)?)/dgv,
+          end: /(augroup\p{space}END|(?=\n?$))/dgv,
+          name: "support.function.augroup.viml"
+        }
+      ]
+    },
+    comment: {
+      patterns: [
+        {
+          begin: /((\p{space}+)?""")/dgv,
+          end: /^(?!")/dgv,
+          name: "comment.block.documentation.viml"
+        },
+        {
+          match: /^"\p{space}vim:[^\n]*/dgv,
+          name: "comment.block.modeline.viml"
+        },
+        {
+          begin: /(\p{space}+"\p{space}+)(?!")/dgv,
+          end: /(?=\n?$)/dgv,
+          name: "comment.line.viml",
+          patterns: [
+            {
+              match: /\{\{\{\p{Nd}?(?=\n?$)/dgv,
+              name: "comment.line.foldmarker.viml"
+            },
+            {
+              match: /\}\}\}\p{Nd}?/dgv,
+              name: "comment.line.foldmarker.viml"
+            }
+          ]
+        },
+        {
+          begin: /^(\p{space}+)?"/dgv,
+          end: /(?=\n?$)/dgv,
+          name: "comment.line.viml",
+          patterns: [
+            {
+              match: /\{\{\{\p{Nd}?(?=\n?$)/dgv,
+              name: "comment.line.foldmarker.viml"
+            },
+            {
+              match: /\}\}\}\p{Nd}?/dgv,
+              name: "comment.line.foldmarker.viml"
+            }
+          ]
+        }
+      ]
+    },
+    constant: {
+      patterns: [
+        {
+          match: /\b(true|false)\b/dgv,
+          name: "constant.language.boolean.viml"
+        },
+        {
+          match: /\b([0-9]+)\b/dgv,
+          name: "constant.numeric.viml"
+        }
+      ]
+    },
+    entity: {
+      patterns: [
+        {
+          match: /(([abgs]:)?[\#\.0-9A-Z_a-z]{2,})\b(?=\()/dgv,
+          name: "entity.name.function.viml"
+        }
+      ]
+    },
+    keyword: {
+      patterns: [
+        {
+          match: /\b(if|while|for|return|au(g(?:|roup))|else(if|)?|do|in)\b/dgv,
+          name: "keyword.control.viml"
+        },
+        {
+          match: /\b(end(?:|if|for|while))\p{space}|(?=\n?$)/dgv,
+          name: "keyword.control.viml"
+        },
+        {
+          match: /\b(break|continue|try|catch|endtry|finally|finish|throw|range)\b/dgv,
+          name: "keyword.control.viml"
+        },
+        {
+          match: /\b(func??|function|endfunction|endfunc)\b/dgv,
+          name: "keyword.function.viml"
+        },
+        {
+          match: /\b(normal|silent)\b/dgv,
+          name: "keyword.other.viml"
+        },
+        { include: "#operators" }
+      ]
+    },
+    map: {
+      patterns: [
+        {
+          begin: /(<)/dgv,
+          beginCaptures: {
+            "1": { name: "punctuation.definition.map.viml" }
+          },
+          end: /([\>\p{space}])/dgv,
+          endCaptures: {
+            "1": { name: "punctuation.definition.map.viml" }
+          },
+          patterns: [
+            {
+              match: /(?<=:\p{space})([^\n]+)/dgv,
+              name: "constant.character.map.rhs.viml"
+            },
+            {
+              match: /(bang|buffer|expr|nop|plug|sid|silent)/dgiv,
+              name: "constant.character.map.special.viml"
+            },
+            {
+              match: /([acdms]-[\p{L}\p{M}\p{N}\p{Pc}])/dgiv,
+              name: "constant.character.map.key.viml"
+            },
+            {
+              match: /(F[0-9]+)/dgiv,
+              name: "constant.character.map.key.fn.viml"
+            },
+            {
+              match: /(bs|bar|cr|del|down|esc|left|right|space|tab|up|leader)/dgiv,
+              name: "constant.character.map.viml"
+            }
+          ]
+        },
+        {
+          match: /\b(([cinostvx]?(nore)?map))\b/dgv,
+          name: "storage.type.map.viml"
+        }
+      ]
+    },
+    operators: {
+      patterns: [
+        {
+          match: /([\!\#\+\=\?\\\~])/dgv,
+          name: "keyword.operator.viml"
+        },
+        {
+          match: / ([\-\.\:]|[\&\|]{2})( |(?=\n?$))/dgv,
+          name: "keyword.operator.viml"
+        },
+        {
+          match: /(\.{3})/dgv,
+          name: "keyword.operator.viml"
+        },
+        {
+          match: /( [\<\>] )/dgv,
+          name: "keyword.operator.viml"
+        },
+        {
+          match: /(>=)/dgv,
+          name: "keyword.operator.viml"
+        }
+      ]
+    },
+    option: {
+      patterns: [
+        {
+          match: new EmulatedRegExp("&?\\b(al|aleph|anti|antialias|arab|arabic|arshape|arabicshape|ari|allowrevins|akm|altkeymap|ambw|ambiwidth|acd|autochdir|ai|autoindent|ar|autoread|aw|autowrite|awa|autowriteall|bg|background|bs|backspace|bk|backup|bkc|backupcopy|bdir|backupdir|bex|backupext|bsk|backupskip|bdlay|balloondelay|beval|ballooneval|bevalterm|balloonevalterm|bexpr|balloonexpr|bo|belloff|bin|binary|bomb|brk|breakat|bri|breakindent|briopt|breakindentopt|bsdir|browsedir|bh|bufhidden|bl|buflisted|bt|buftype|cmp|casemap|cd|cdpath|cedit|ccv|charconvert|cin|cindent|cink|cinkeys|cino|cinoptions|cinw|cinwords|cb|clipboard|ch|cmdheight|cwh|cmdwinheight|cc|colorcolumn|co|columns|com|comments|cms|commentstring|cp|compatible|cpt|complete|cocu|concealcursor|cole|conceallevel|cfu|completefunc|cot|completeopt|cf|confirm|ci|copyindent|cpo|cpoptions|cm|cryptmethod|cspc|cscopepathcomp|csprg|cscopeprg|csqf|cscopequickfix|csre|cscoperelative|cst|cscopetag|csto|cscopetagorder|csverb|cscopeverbose|crb|cursorbind|cuc|cursorcolumn|cul|cursorline|debug|def|define|deco|delcombine|dict|dictionary|diff|dex|diffexpr|dip|diffopt|dg|digraph|dir|directory|dy|display|ead|eadirection|ed|edcompatible|emo|emoji|enc|encoding|eol|endofline|ea|equalalways|ep|equalprg|eb|errorbells|ef|errorfile|efm|errorformat|ek|esckeys|ei|eventignore|et|expandtab|ex|exrc|fenc|fileencoding|fencs|fileencodings|ff|fileformat|ffs|fileformats|fic|fileignorecase|ft|filetype|fcs|fillchars|fixeol|fixendofline|fk|fkmap|fcl|foldclose|fdc|foldcolumn|fen|foldenable|fde|foldexpr|fdi|foldignore|fdl|foldlevel|fdls|foldlevelstart|fmr|foldmarker|fdm|foldmethod|fml|foldminlines|fdn|foldnestmax|fdo|foldopen|fdt|foldtext|fex|formatexpr|fo|formatoptions|flp|formatlistpat|fp|formatprg|fs|fsync|gd|gdefault|gfm|grepformat|gp|grepprg|gcr|guicursor|gfn|guifont|gfs|guifontset|gfw|guifontwide|ghr|guiheadroom|go|guioptions|guipty|gtl|guitablabel|gtt|guitabtooltip|hf|helpfile|hh|helpheight|hlg|helplang|hid|hidden|hl|highlight|hi|history|hk|hkmap|hkp|hkmapp|hls|hlsearch|icon|iconstring|ic|ignorecase|imaf|imactivatefunc|imak|imactivatekey|imc|imcmdline|imd|imdisable|imi|iminsert|ims|imsearch|imsf|imstatusfunc|imst|imstyle|inc|include|inex|includeexpr|is|incsearch|inde|indentexpr|indk|indentkeys|inf|infercase|im|insertmode|isf|isfname|isi|isident|isk|iskeyword|isp|isprint|js|joinspaces|key|kmp|keymap|km|keymodel|kp|keywordprg|lmap|langmap|lm|langmenu|lnr|langnoremap|lrm|langremap|ls|laststatus|lz|lazyredraw|lbr|linebreak|lines|lsp|linespace|lisp|lw|lispwords|list|lcs|listchars|lpl|loadplugins|luadll|macatsui|magic|mef|makeef|menc|makeencoding|mp|makeprg|mps|matchpairs|mat|matchtime|mco|maxcombine|mfd|maxfuncdepth|mmd|maxmapdepth|mm|maxmem|mmp|maxmempattern|mmt|maxmemtot|mis|menuitems|msm|mkspellmem|ml|modeline|mls|modelines|ma|modifiable|mod|modified|more|mousef??|mousefocus|mh|mousehide|mousem|mousemodel|mouses|mouseshape|mouset|mousetime|mzschemedll|mzschemegcdll|mzq|mzquantum|nf|nrformats|nu|number|nuw|numberwidth|ofu|omnifunc|odev|opendevice|opfunc|operatorfunc|pp|packpath|para|paragraphs|paste|pt|pastetoggle|pex|patchexpr|pm|patchmode|pa|path|perldll|pi|preserveindent|pvh|previewheight|pvw|previewwindow|pdev|printdevice|penc|printencoding|pexpr|printexpr|pfn|printfont|pheader|printheader|pmbcs|printmbcharset|pmbfn|printmbfont|popt|printoptions|prompt|ph|pumheight|pythonthreedll|pythondll|pyx|pyxversion|qe|quoteescape|ro|readonly|rdt|redrawtime|re|regexpengine|rnu|relativenumber|remap|rop|renderoptions|report|rs|restorescreen|ri|revins|rl|rightleft|rlc|rightleftcmd|rubydll|ru|ruler|ruf|rulerformat|rtp|runtimepath|scr|scroll|scb|scrollbind|sj|scrolljump|so|scrolloff|sbo|scrollopt|sect|sections|secure|sel|selection|slm|selectmode|ssop|sessionoptions|sh|shell|shcf|shellcmdflag|sp|shellpipe|shq|shellquote|srr|shellredir|ssl|shellslash|stmp|shelltemp|st|shelltype|sxq|shellxquote|sxe|shellxescape|sr|shiftround|sw|shiftwidth|shm|shortmess|sn|shortname|sbr|showbreak|sc|showcmd|sft|showfulltag|sm|showmatch|smd|showmode|stal|showtabline|ss|sidescroll|siso|sidescrolloff|scl|signcolumn|scs|smartcase|si|smartindent|sta|smarttab|sts|softtabstop|spell|spc|spellcapcheck|spf|spellfile|spl|spelllang|sps|spellsuggest|sb|splitbelow|spr|splitright|sol|startofline|stl|statusline|su|suffixes|sua|suffixesadd|swf|swapfile|sws|swapsync|swb|switchbuf|smc|synmaxcol|syn|syntax|tal|tabline|tpm|tabpagemax|ts|tabstop|tbs|tagbsearch|tc|tagcase|tl|taglength|tr|tagrelative|tags??|tgst|tagstack|tcldll|term|tbidi|termbidi|tenc|termencoding|tgc|termguicolors|tk|termkey|tms|termsize|terse|ta|textauto|tx|textmode|tw|textwidth|tsr|thesaurus|top|tildeop|to|timeout|tm|timeoutlen|title|titlelen|titleold|titlestring|tb|toolbar|tbis|toolbariconsize|ttimeout|ttm|ttimeoutlen|tbi|ttybuiltin|tf|ttyfast|ttym|ttymouse|tsl|ttyscroll|tty|ttytype|udir|undodir|udf|undofile|ul|undolevels|ur|undoreload|uc|updatecount|ut|updatetime|vbs|verbose|vfile|verbosefile|vdir|viewdir|vop|viewoptions|vi|viminfo|vif|viminfofile|ve|virtualedit|vb|visualbell|warn|wiv|weirdinvert|ww|whichwrap|wc|wildchar|wcm|wildcharm|wig|wildignore|wic|wildignorecase|wmnu|wildmenu|wim|wildmode|wop|wildoptions|wak|winaltkeys|wi|window|wh|winheight|wfh|winfixheight|wfw|winfixwidth|wmh|winminheight|wmw|winminwidth|winptydll|wiw|winwidth|wrap|wm|wrapmargin|ws|wrapscan|write|wa|writeany|wb|writebackup|wd|writedelay)\\b", "dgv", { lazyCompile: true }),
+          name: "support.type.option.viml"
+        },
+        {
+          match: new EmulatedRegExp("&?\\b(aleph|allowrevins|altkeymap|ambiwidth|autochdir|arabic|arabicshape|autoindent|autoread|autowrite|autowriteall|background|backspace|backup|backupcopy|backupdir|backupext|backupskip|balloondelay|ballooneval|balloonexpr|belloff|binary|bomb|breakat|breakindent|breakindentopt|browsedir|bufhidden|buflisted|buftype|casemap|cdpath|cedit|charconvert|cindent|cinkeys|cinoptions|cinwords|clipboard|cmdheight|cmdwinheight|colorcolumn|columns|comments|commentstring|complete|completefunc|completeopt|concealcursor|conceallevel|confirm|copyindent|cpoptions|cscopepathcomp|cscopeprg|cscopequickfix|cscoperelative|cscopetag|cscopetagorder|cscopeverbose|cursorbind|cursorcolumn|cursorline|debug|define|delcombine|dictionary|diff|diffexpr|diffopt|digraph|directory|display|eadirection|encoding|endofline|equalalways|equalprg|errorbells|errorfile|errorformat|eventignore|expandtab|exrc|fileencodings??|fileformats??|fileignorecase|filetype|fillchars|fixendofline|fkmap|foldclose|foldcolumn|foldenable|foldexpr|foldignore|foldlevel|foldlevelstart|foldmarker|foldmethod|foldminlines|foldnestmax|foldopen|foldtext|formatexpr|formatlistpat|formatoptions|formatprg|fsync|gdefault|grepformat|grepprg|guicursor|guifont|guifontset|guifontwide|guioptions|guitablabel|guitabtooltip|helpfile|helpheight|helplang|hidden|hlsearch|history|hkmapp??|icon|iconstring|ignorecase|imcmdline|imdisable|iminsert|imsearch|include|includeexpr|incsearch|indentexpr|indentkeys|infercase|insertmode|isfname|isident|iskeyword|isprint|joinspaces|keymap|keymodel|keywordprg|langmap|langmenu|langremap|laststatus|lazyredraw|linebreak|lines|linespace|lisp|lispwords|list|listchars|loadplugins|magic|makeef|makeprg|matchpairs|matchtime|maxcombine|maxfuncdepth|maxmapdepth|maxmem|maxmempattern|maxmemtot|menuitems|mkspellmem|modelines??|modifiable|modified|more|mouse|mousefocus|mousehide|mousemodel|mouseshape|mousetime|nrformats|number|numberwidth|omnifunc|opendevice|operatorfunc|packpath|paragraphs|paste|pastetoggle|patchexpr|patchmode|path|perldll|preserveindent|previewheight|previewwindow|printdevice|printencoding|printexpr|printfont|printheader|printmbcharset|printmbfont|printoptions|prompt|pumheight|pythondll|pythonthreedll|quoteescape|readonly|redrawtime|regexpengine|relativenumber|remap|report|revins|rightleft|rightleftcmd|rubydll|ruler|rulerformat|runtimepath|scroll|scrollbind|scrolljump|scrolloff|scrollopt|sections|secure|selection|selectmode|sessionoptions|shada|shell|shellcmdflag|shellpipe|shellquote|shellredir|shellslash|shelltemp|shellxescape|shellxquote|shiftround|shiftwidth|shortmess|showbreak|showcmd|showfulltag|showmatch|showmode|showtabline|sidescroll|sidescrolloff|signcolumn|smartcase|smartindent|smarttab|softtabstop|spell|spellcapcheck|spellfile|spelllang|spellsuggest|splitbelow|splitright|startofline|statusline|suffixes|suffixesadd|swapfile|switchbuf|synmaxcol|syntax|tabline|tabpagemax|tabstop|tagbsearch|tagcase|taglength|tagrelative|tags|tagstack|term|termbidi|terse|textwidth|thesaurus|tildeop|timeout|timeoutlen|title|titlelen|titleold|titlestring|ttimeout|ttimeoutlen|ttytype|undodir|undofile|undolevels|undoreload|updatecount|updatetime|verbose|verbosefile|viewdir|viewoptions|virtualedit|visualbell|warn|whichwrap|wildcharm??|wildignore|wildignorecase|wildmenu|wildmode|wildoptions|winaltkeys|window|winheight|winfixheight|winfixwidth|winminheight|winminwidth|winwidth|wrap|wrapmargin|wrapscan|write|writeany|writebackup|writedelay)\\b", "dgv", { lazyCompile: true }),
+          name: "support.type.option.viml"
+        },
+        {
+          match: /&?\b(al|ari|akm|ambw|acd|arab|arshape|ai|ar|awa??|bg|bs|bkc??|bdir|bex|bsk|bdlay|beval|bexpr|bo|bin|bomb|brk|bri|briopt|bsdir|bh|bl|bt|cmp|cd|cedit|ccv|cink??|cino|cinw|cb|ch|cwh|cc|com??|cms|cpt|cfu|cot|cocu|cole|cf|ci|cpo|cspc|csprg|csqf|csre|csto??|cpo|crb|cuc|cul|debug|def|deco|dict|diff|dex|dip|dg|dir|dy|ead|enc|eol|ea|ep|eb|efm??|ei|et|ex|fencs??|ffs??|fic|ft|fcs|fixeol|fk|fcl|fdc|fen|fde|fdi|fdls??|fmr|fdm|fml|fdn|fdo|fdt|fex|flp|fo|fp|fs|gd|gfm|gp|gcr|gfn|gfs|gfw|go|gtl|gtt|hf|hh|hlg|hid|hls|hi|hkp??|icon|iconstring|ic|imc|imd|imi|ims|inc|inex|is|inde|indk|inf|im|isf|isi|isk|isp|js|kmp?|kp|lmap|lm|lrm|ls|lz|lbr|lines|lsp|lisp|lw|list|lcs|lpl|magic|mef|mps??|mat|mco|mfd|mmd?|mmp|mmt|mis|msm|mls??|ma|mod|more|mousef??|mh|mousem|mouses|mouset|nf|nuw??|ofu|odev|opfunc|pp|para|paste|pt|pex|pm|pa|perldll|pi|pvh|pvw|pdev|penc|pexpr|pfn|pheader|pmbcs|pmbfn|popt|prompt|ph|pythondll|pythonthreedlll|qe|ro|rdt|re|rnu|remap|report|ri|rlc??|rubydll|ruf??|rtp|scr|scb|sj|so|sbo|sect|secure|sel|slm|ssop|sd|sh|shcf|sp|shq|srr|ssl|stmp|sxe|sxq|sr|sw|shm|sbr|sc|sft|smd??|stal|ss|siso|scl|scs|si|sta|sts|spell|spc|spf|spl|sps|sb|spr|sol|stl|sua??|swf|swb|smc|syn|tal|tpm|ts|tbs|tc|tl|tr|tag|tgst|term|tbidi|terse|tw|tsr|top?|tm|title|titlelen|titleold|titlestring|ttimeout|ttm|tty|udir|udf|ul|ur|uc|ut|vbs|vfile|vdir|vop|ve|vb|warn|ww|wcm??|wig|wic|wmnu|wim|wop|wak|wi|wh|wfh|wfw|wmh|wmw|wiw|wrap|wm|ws|write|wa|wb|wd)\b/dgv,
+          name: "support.type.option.shortname.viml"
+        },
+        {
+          match: /\b(no(?:anti|antialias|arab|arabic|arshape|arabicshape|ari|allowrevins|akm|altkeymap|acd|autochdir|ai|autoindent|ar|autoread|aw|autowrite|awa|autowriteall|bk|backup|beval|ballooneval|bevalterm|balloonevalterm|bin|binary|bomb|bri|breakindent|bl|buflisted|cin|cindent|cp|compatible|cf|confirm|ci|copyindent|csre|cscoperelative|cst|cscopetag|csverb|cscopeverbose|crb|cursorbind|cuc|cursorcolumn|cul|cursorline|deco|delcombine|diff|dg|digraph|ed|edcompatible|emo|emoji|eol|endofline|ea|equalalways|eb|errorbells|ek|esckeys|et|expandtab|ex|exrc|fic|fileignorecase|fixeol|fixendofline|fk|fkmap|fen|foldenable|fs|fsync|gd|gdefault|guipty|hid|hidden|hk|hkmap|hkp|hkmapp|hls|hlsearch|icon|ic|ignorecase|imc|imcmdline|imd|imdisable|is|incsearch|inf|infercase|im|insertmode|js|joinspaces|lnr|langnoremap|lrm|langremap|lz|lazyredraw|lbr|linebreak|lisp|list|lpl|loadplugins|macatsui|magic|ml|modeline|ma|modifiable|mod|modified|more|mousef|mousefocus|mh|mousehide|nu|number|odev|opendevice|paste|pi|preserveindent|pvw|previewwindow|prompt|ro|readonly|rnu|relativenumber|rs|restorescreen|ri|revins|rl|rightleft|ru|ruler|scb|scrollbind|secure|ssl|shellslash|stmp|shelltemp|sr|shiftround|sn|shortname|sc|showcmd|sft|showfulltag|sm|showmatch|smd|showmode|scs|smartcase|si|smartindent|sta|smarttab|spell|sb|splitbelow|spr|splitright|sol|startofline|swf|swapfile|tbs|tagbsearch|tr|tagrelative|tgst|tagstack|tbidi|termbidi|tgc|termguicolors|terse|ta|textauto|tx|textmode|top|tildeop|to|timeout|title|ttimeout|tbi|ttybuiltin|tf|ttyfast|udf|undofile|vb|visualbell|warn|wiv|weirdinvert|wic|wildignorecase|wmnu|wildmenu|wfh|winfixheight|wfw|winfixwidth|wrapscan|wrap|ws|write|wa|writeany|wb|writebackup))\b/dgv,
+          name: "support.type.option.off.viml"
+        }
+      ]
+    },
+    punctuation: {
+      patterns: [
+        {
+          match: /([\(\)])/dgv,
+          name: "punctuation.parens.viml"
+        },
+        {
+          match: /(,)/dgv,
+          name: "punctuation.comma.viml"
+        }
+      ]
+    },
+    storage: {
+      patterns: [
+        {
+          match: /\b(call|let|unlet)\b/dgv,
+          name: "storage.viml"
+        },
+        {
+          match: /\b(a(?:bort|utocmd))\b/dgv,
+          name: "storage.viml"
+        },
+        {
+          match: /\b(set(l(?:|ocal))?)\b/dgv,
+          name: "storage.viml"
+        },
+        {
+          match: /\b(com(mand)?)\b/dgv,
+          name: "storage.viml"
+        },
+        {
+          match: /\b(color(scheme)?)\b/dgv,
+          name: "storage.viml"
+        },
+        {
+          match: /\b(Plug(?:|in))\b/dgv,
+          name: "storage.plugin.viml"
+        }
+      ]
+    },
+    strings: {
+      patterns: [
+        {
+          begin: /"/dgv,
+          end: /("|(?=\n?$))/dgv,
+          name: "string.quoted.double.viml",
+          patterns: []
+        },
+        {
+          begin: /'/dgv,
+          end: /('|(?=\n?$))/dgv,
+          name: "string.quoted.single.viml",
+          patterns: []
+        },
+        {
+          match: /\/(\\\\|\\\/|[^\n\/])*\//dgv,
+          name: "string.regexp.viml"
+        }
+      ]
+    },
+    support: {
+      patterns: [
+        {
+          match: /(add|call|delete|empty|extend|get|has|isdirectory|join|printf)(?=\()/dgv,
+          name: "support.function.viml"
+        },
+        {
+          match: /\b(echo(m|hl)?|exe(cute)?|redir|redraw|sleep|so(urce)?|wincmd|setf)\b/dgv,
+          name: "support.function.viml"
+        },
+        {
+          match: /(v:(beval_col|beval_bufnr|beval_lnum|beval_text|beval_winnr|char|charconvert_from|charconvert_to|cmdarg|cmdbang|count1??|ctype|dying|errmsg|exception|fcs_reason|fcs_choice|fname_in|fname_out|fname_new|fname_diff|folddashes|foldlevel|foldend|foldstart|insertmode|key|lang|lc_time|lnum|mouse_win|mouse_lnum|mouse_col|oldfiles|operator|prevcount|profiling|progname|register|scrollstart|servername|searchforward|shell_error|statusmsg|swapname|swapchoice|swapcommand|termresponse|this_session|throwpoint|val|version|warningmsg|windowid))/dgv,
+          name: "support.type.builtin.vim-variable.viml"
+        },
+        {
+          match: /(&(cpo|isk|omnifunc|paste|previewwindow|rtp|tags|term|wrap))/dgv,
+          name: "support.type.builtin.viml"
+        },
+        {
+          match: /(&(shell(cmdflag|redir)?))/dgv,
+          name: "support.type.builtin.viml"
+        },
+        {
+          match: /<args>/dgv,
+          name: "support.variable.args.viml"
+        },
+        {
+          match: /\b(None|ErrorMsg|WarningMsg)\b/dgv,
+          name: "support.type.syntax.viml"
+        },
+        {
+          match: /\b(BufNewFile|BufReadPre|BufRead|BufReadPost|BufReadCmd|FileReadPre|FileReadPost|FileReadCmd|FilterReadPre|FilterReadPost|StdinReadPre|StdinReadPost|BufWrite|BufWritePre|BufWritePost|BufWriteCmd|FileWritePre|FileWritePost|FileWriteCmd|FileAppendPre|FileAppendPost|FileAppendCmd|FilterWritePre|FilterWritePost|BufAdd|BufCreate|BufDelete|BufWipeout|BufFilePre|BufFilePost|BufEnter|BufLeave|BufWinEnter|BufWinLeave|BufUnload|BufHidden|BufNew|SwapExists|TermOpen|TermClose|FileType|Syntax|OptionSet|VimEnter|GUIEnter|GUIFailed|TermResponse|QuitPre|VimLeavePre|VimLeave|DirChanged|FileChangedShell|FileChangedShellPost|FileChangedRO|ShellCmdPost|ShellFilterPost|CmdUndefined|FuncUndefined|SpellFileMissing|SourcePre|SourceCmd|VimResized|FocusGained|FocusLost|CursorHoldI??|CursorMovedI??|WinNew|WinEnter|WinLeave|TabEnter|TabLeave|TabNew|TabNewEntered|TabClosed|CmdlineEnter|CmdlineLeave|CmdwinEnter|CmdwinLeave|InsertEnter|InsertChange|InsertLeave|InsertCharPre|TextYankPost|TextChangedI??|ColorScheme|RemoteReply|QuickFixCmdPre|QuickFixCmdPost|SessionLoadPost|MenuPopup|CompleteDone|User)\b/dgv,
+          name: "support.type.event.viml"
+        },
+        {
+          match: /\b(Comment|Constant|String|Character|Number|Boolean|Float|Identifier|Function|Statement|Conditional|Repeat|Label|Operator|Keyword|Exception|PreProc|Include|Define|Macro|PreCondit|Type|StorageClass|Structure|Typedef|Special|SpecialChar|Tag|Delimiter|SpecialComment|Debug|Underlined|Ignore|Error|Todo)\b/dgv,
+          name: "support.type.syntax-group.viml"
+        }
+      ]
+    },
+    syntax: {
+      patterns: [
+        {
+          match: /syn(tax)? case (ignore|match)/dgv,
+          name: "keyword.control.syntax.viml"
+        },
+        {
+          match: /syn(tax)? (clear|enable|include|off|on|manual|sync)/dgv,
+          name: "keyword.control.syntax.viml"
+        },
+        {
+          match: /\b(contained|display|excludenl|fold|keepend|oneline|skipnl|skipwhite|transparent)\b/dgv,
+          name: "keyword.other.syntax.viml"
+        },
+        {
+          match: /\b(add|containedin|contains|matchgroup|nextgroup)=/dgv,
+          name: "keyword.other.syntax.viml"
+        },
+        {
+          captures: {
+            "1": { name: "keyword.other.syntax-range.viml" },
+            "3": { name: "string.regexp.viml" }
+          },
+          match: /((start|skip|end)=)(\+\P{space}+\+\p{space})?/dgv
+        },
+        {
+          captures: {
+            "0": { name: "support.type.syntax.viml" },
+            "1": { name: "storage.syntax.viml" },
+            "3": { name: "variable.other.syntax-scope.viml" },
+            "4": { name: "storage.modifier.syntax.viml" }
+          },
+          match: /(syn(?:|tax))\p{space}+(cluster|keyword|match|region)(\p{space}+[\p{L}\p{M}\p{N}\p{Pc}]+\p{space}+)(contained)?/dgv,
+          patterns: []
+        },
+        {
+          captures: {
+            "1": { name: "storage.highlight.viml" },
+            "2": { name: "storage.modifier.syntax.viml" },
+            "3": { name: "support.function.highlight.viml" },
+            "4": { name: "variable.other.viml" },
+            "5": { name: "variable.other.viml" }
+          },
+          match: /(hi(?:|ghlight))\p{space}+(def(?:|ault))\p{space}+(link)\p{space}+([\p{L}\p{M}\p{N}\p{Pc}]+)\p{space}+([\p{L}\p{M}\p{N}\p{Pc}]+)/dgv,
+          patterns: []
+        }
+      ]
+    },
+    variable: {
+      patterns: [
+        {
+          match: /https?:\/\/\P{space}+/dgv,
+          name: "variable.other.link.viml"
+        },
+        {
+          match: /(?<=\()([A-Za-z]+)(?=\))/dgv,
+          name: "variable.parameter.viml"
+        },
+        {
+          match: /\b([abgls]:[\#\.0-9A-Z_a-z]+)\b(?!\()/dgv,
+          name: "variable.other.viml"
+        }
+      ]
+    }
+  },
+  dependencies: []
+};

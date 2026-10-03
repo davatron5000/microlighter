@@ -1,0 +1,3 @@
+/^(revert: )?(feat|fix|docs|dx|style|refactor|perf|test|workflow|build|ci|chore|types|wip)(\(.+\))?: .{1,50}/
+
+(?#  From https://github.com/vuejs/core/blob/107e6143e716986269fc7c1d96733cb59dfadc53/.github/commit-convention.md?plain=1#L10)

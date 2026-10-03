@@ -1,0 +1,32 @@
+{{short description|JavaScript runtime environment}}
+{{Infobox software
+| name                   = Node.js
+| logo                   = Node.js logo.svg
+| author                 = [[Ryan Dahl]]
+| developer              = [[OpenJS Foundation]]
+| released               = {{Start date and age|2009|05|27}}<ref>{{cite web
+  | url=https://github.com/joyent/node/tags?after=v0.0.4
+  | access-date = 2 August 2014|title=node-v0.x-archive on GitHub| website = [[GitHub]]}}</ref>
+| latest release version = {{wikidata|property|edit|qualifier|P548=Q2804309|reference|P348}}
+| latest release date    = {{start date and age|{{wikidata|qualifier|mdy|P548=Q2804309|P348|P577}}}}
+| programming language   = [[JavaScript]], [[C++]], [[Python (programming language)|Python]],
+ [[C (programming language)|C]]
+| operating system       = [[z/OS]], [[Linux]], [[macOS]], [[Microsoft Windows]], [[SmartOS]],
+ [[FreeBSD]], [[OpenBSD]], [[IBM AIX]]<ref name="supportedOS">{{cite web
+ |url=https://github.com/nodejs/node/blob/master/BUILDING.md|title=nodejs/node|website=GitHub
+ |date=13 April 2022}}</ref>
+| genre                  = [[Runtime system|Runtime environment]]
+| license                = [[MIT License]]<ref>{{cite web
+ |title=node/LICENSE at master
+ |url=https://github.com/nodejs/node/blob/master/LICENSE|website=GitHub
+ |publisher=Node.js Foundation|access-date = 17 September 2018|date=17 September 2018}}</ref>
+ <ref>{{cite web|title=The MIT License|url=https://opensource.org/licenses/MIT
+  |website=Open Source Initiative|access-date = 17 September 2018|date=17 September 2018}}</ref>
+}}
+
+'''Node.js''' is a [[cross-platform]], [[Open-source software|open-source]] [[JavaScript]]
+[[Runtime environment|runtime environment]] that can run on [[Microsoft Windows|Windows]],
+[[Linux]], [[Unix]], [[macOS]], and more. Node.js runs on the [[V8 (JavaScript engine)|V8]]
+[[JavaScript engine]], and executes JavaScript code outside a [[web browser]].
+
+<!-- From https://en.wikipedia.org/w/index.php?title=Node.js&oldid=1221374117 -->

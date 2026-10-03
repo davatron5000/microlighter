@@ -1,0 +1,74 @@
+use Random;
+
+/* outer /* nested */ block comment */
+
+config const n = 10;
+const D = {1..n, 1..n};
+const halfOpen = 0..<n;
+const counted = 1..#5;
+
+var A: [D] real;
+var scratch: real = noinit;
+fillRandom(A);
+
+const story = """
+multi-line "double" and 'single' quotes
+""";
+
+@deprecated("use newPoint instead")
+proc oldPoint() do return (0.0, 0.0);
+
+record Point {
+  var x, y: real;
+  proc init(x: real, y: real) {
+    this.x = x;
+    this.y = y;
+  }
+  proc postinit() { writeln("post-init"); }
+  proc deinit() { writeln("destroy point"); }
+}
+
+class Tree {
+  var val: int;
+  var left, right: owned Tree?;
+  proc deinit() { writeln("freeing ", val); }
+}
+
+var sharedRoot: shared Tree = new shared Tree(0);
+var borrowedRef: borrowed Tree?;
+var unmanagedRef: unmanaged Tree?;
+
+iter fibonacci(count: int) {
+  var (cur, next) = (0, 1);
+  for 1..count {
+    yield cur;
+    (cur, next) = (next, cur + next);
+  }
+}
+
+var counter: atomic int;
+var done: sync bool;
+var a = 1, b = 2;
+a <=> b;
+
+forall (i, j) in D do
+  A[i, j] = if i == j then 1.0 else A[i, j];
+
+cobegin {
+  { A[1, ..] = 0.0; done.writeEF(true); }
+  { done.readFE(); writeln("phase done"); }
+}
+
+coforall loc in Locales do on loc {
+  counter.add(1);
+  writeln("locale ", loc.id, ": ", here.maxTaskPar, " tasks");
+}
+
+extern {
+  #include <math.h>
+  static inline double square(double v) { return v * v; }
+}
+
+writeln(story);
+writeln("sum=", + reduce A, " swapped: a=", a, " b=", b);
+// From https://github.com/chapel-lang/chapel/tree/main/test/release/examples/primers

@@ -14,13 +14,16 @@ test("build emits matching unminified and minified auto-run bundles", async () =
   assert.ok(bundle.length > minifiedBundle.length);
 });
 
-test("includes first-party language aliases in the core bundle", async () => {
-  const bundle = await readFile(
-    new URL("../dist/microlighter.min.js", import.meta.url),
-    "utf8"
-  );
+test("keeps only non-file-name aliases in the core bundle", async () => {
+  const [bundle, alias] = await Promise.all([
+    readFile(new URL("../dist/microlighter.min.js", import.meta.url), "utf8"),
+    readFile(new URL("../dist/grammars/js.js", import.meta.url), "utf8")
+  ]);
 
-  assert.match(bundle, /jsx:"javascript"/);
+  assert.match(bundle, /"c#":"csharp"/);
+  assert.doesNotMatch(bundle, /js:"javascript"/);
+  // File-name-safe aliases are re-export modules resolved by the loader.
+  assert.match(alias, /from"\.\/(?:javascript\.mjs|chunks\/[^"]+)"/);
 });
 
 test("build emits complete custom-element bundles", async () => {
@@ -55,7 +58,10 @@ test("build whitespace-minifies grammar and theme files", async () => {
   ]);
 
   assert.equal(grammar.trim().split("\n").length, 1);
-  assert.match(grammar, /export default\{scopeName:"source\.js"/);
+  // Entry points either inline the grammar or re-export it from a shared
+  // chunk; nothing may reach for the oniguruma-to-es package at runtime.
+  assert.match(grammar, /export\{\w+ as default\}|export default\{/);
+  assert.doesNotMatch(grammar, /from\s*["']oniguruma-to-es["']/);
   assert.equal(theme.trim().split("\n").length, 1);
   assert.match(theme, /\[data-syntax-theme=(?:"github"|github)\]/);
 });

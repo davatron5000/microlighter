@@ -1,0 +1,36 @@
+QComboBox:on
+{
+    padding-top: 3px;
+    padding-left: 4px;
+    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);
+    selection-background-color: #ffaa00;
+}
+
+QComboBox::down-arrow
+{
+     image: url(:/stylesheet/resources/stylesheet/down_arrow.png);
+}
+
+QTabBar::tab:first:!selected
+{
+    margin-left: 0px; /* the last selected tab has nothing to overlap with on the right */
+    border-top-left-radius: 3px;
+}
+
+QRadioButton::indicator:checked
+{
+    background-color: qradialgradient(
+        cx: 0.5, cy: 0.5,
+        fx: 0.5, fy: 0.5,
+        radius: 1.0,
+        stop: 0.25 #ffaa00,
+        stop: 0.3 #323232
+    );
+}
+
+QRadioButton::indicator:hover, QCheckBox::indicator:hover
+{
+    border: 1px solid #ffaa00;
+}
+
+/* From https://invent.kde.org/rolisteam/rolisteam/-/blob/master/resources/stylesheet/client/darkorange/darkorange.qss */

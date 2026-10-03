@@ -1,0 +1,103 @@
+package main
+
+import "core:fmt"
+import "core:os"
+import "core:mem"
+
+// A struct with fields
+Vector3 :: struct {
+    x, y, z: f32,
+}
+
+// An enum
+Direction :: enum {
+    North,
+    South,
+    East,
+    West,
+}
+
+// A union type
+Value :: union {
+    int,
+    f64,
+    string,
+}
+
+// Procedure with multiple return values
+divide :: proc(a, b: int) -> (result: int, ok: bool) {
+    if b == 0 {
+        return 0, false
+    }
+    return a / b, true
+}
+
+// Generic procedure
+swap :: proc(a, b: ^$T) {
+    a^, b^ = b^, a^
+}
+
+// Main entry point
+main :: proc() {
+    // Variable declarations
+    x: int = 42
+    y := 3.14
+    name := "Odin"
+
+    // String formatting
+    fmt.printf("Hello, %s! x = %d, y = %f\n", name, x, y)
+
+    // Control flow
+    if x > 0 {
+        fmt.println("x is positive")
+    } else {
+        fmt.println("x is not positive")
+    }
+
+    // For loop
+    for i := 0; i < 5; i += 1 {
+        fmt.println(i)
+    }
+
+    // Range-based loop
+    numbers := [5]int{1, 2, 3, 4, 5}
+    for num in numbers {
+        fmt.println(num)
+    }
+
+    // Switch statement
+    dir := Direction.North
+    switch dir {
+    case .North:
+        fmt.println("Going north")
+    case .South:
+        fmt.println("Going south")
+    case:
+        fmt.println("Other direction")
+    }
+
+    // Using defer
+    if file, ok := os.open("test.txt"); ok == nil {
+        defer os.close(file)
+        // Work with file
+    }
+
+    // Struct initialization
+    v := Vector3{1.0, 2.0, 3.0}
+    fmt.printf("Vector: (%f, %f, %f)\n", v.x, v.y, v.z)
+
+    // Pointer operations
+    ptr := &x
+    ptr^ = 100
+
+    // Slice operations
+    slice := numbers[1:4]
+    fmt.println(slice)
+
+    // Using or_else
+    result, ok := divide(10, 0)
+    value := result if ok else -1
+    fmt.println(value)
+}
+
+// from https://odin-lang.org

@@ -1,0 +1,16 @@
+pick 3a1f2c9 Add CSS Custom Highlight API renderer
+reword 7be40d1 Load grammars lazily per language
+squash c02e8aa Fix typo in grammar loader
+fixup 91d7f33 Remove leftover debug logging
+edit 5e6a0b2 Add tests for nested begin/end rules
+drop d4c1e77 Experimental span fallback
+
+# Rebase 2f0b1a3..d4c1e77 onto 2f0b1a3 (6 commands)
+#
+# Commands:
+# p, pick <commit> = use commit
+# r, reword <commit> = use commit, but edit the commit message
+# s, squash <commit> = use commit, but meld into previous commit
+# f, fixup <commit> = like "squash", but discard this commit's log message
+# d, drop <commit> = remove commit
+#

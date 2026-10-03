@@ -25,7 +25,14 @@ printf '/// <reference path="./global.d.ts" />\n%s' "$(cat "$element_bundle_type
   > "$element_bundle_types.tmp"
 mv "$element_bundle_types.tmp" "$element_bundle_types"
 
+# Grammars are precompiled modules that import `oniguruma-to-es` and each
+# other, so bundle them with code splitting to keep shared code in chunks.
+rm -rf "$dist/grammars"
 npx --yes esbuild@0.25.8 "$directory/src/grammars/"*.js \
+  --bundle \
+  --splitting \
+  --format=esm \
+  --chunk-names="chunks/[name]-[hash]" \
   --minify-whitespace \
   --outdir="$dist/grammars" \
   --log-level=warning

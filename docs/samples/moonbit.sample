@@ -1,0 +1,53 @@
+// MoonBit sample - a Rust-like language for WebAssembly
+
+// Type definitions
+struct Point {
+  x : Int
+  y : Int
+} derive(Show, Eq)
+
+enum Color {
+  Red
+  Green
+  Blue
+  RGB(r~ : Int, g~ : Int, b~ : Int)
+}
+
+// Trait definition
+trait Printable {
+  to_string(Self) -> String
+}
+
+// Implementation
+impl Printable for Point with to_string(self) {
+  "Point(\{self.x}, \{self.y})"
+}
+
+// Function with pattern matching
+fn describe(opt : Int?) -> String {
+  match opt {
+    Some(n) => "Got \{n}"
+    None => "Nothing"
+  }
+}
+
+// Main function
+fn main {
+  let point = { x: 10, y: 20 }
+  let message = describe(Some(42))
+  println(point.to_string())
+  println(message)
+}
+
+// Test block
+test "basic arithmetic" {
+  let x = 1 + 2 * 3
+  assert_eq(x, 7)
+}
+
+// Async function
+async fn fetch_data() -> String raise Error {
+  "data"
+}
+
+// From https://docs.moonbitlang.com/

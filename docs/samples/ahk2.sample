@@ -1,0 +1,11 @@
+#z::Run "https://www.autohotkey.com"  ; Win+Z
+
+^!n::  ; Ctrl+Alt+N
+{
+    if WinExist("Untitled - Notepad")
+        WinActivate
+    else
+        Run "Notepad"
+}
+
+; https://www.autohotkey.com/docs/v2/Program.htm

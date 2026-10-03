@@ -1,0 +1,72 @@
+; NSIS Example Installer Script
+
+!include "MUI2.nsh"
+!include "LogicLib.nsh"
+
+!define PRODUCT_NAME "My Application"
+!define PRODUCT_VERSION "1.0.0"
+!define PRODUCT_PUBLISHER "Example Corp"
+
+Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+OutFile "setup.exe"
+InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
+InstallDirRegKey HKLM "Software\${PRODUCT_NAME}" "InstallDir"
+RequestExecutionLevel admin
+Unicode true
+
+; Interface settings
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "license.txt"
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+
+!insertmacro MUI_LANGUAGE "English"
+
+/*
+  Main installation section
+*/
+Section "Application Files" SecMain
+  SetOutPath "$INSTDIR"
+
+  File /r "dist\*.*"
+  File "README.md"
+
+  WriteRegStr HKLM "Software\${PRODUCT_NAME}" "InstallDir" "$INSTDIR"
+  WriteRegStr HKLM "Software\${PRODUCT_NAME}" "Version" "${PRODUCT_VERSION}"
+
+  ; Create uninstaller
+  WriteUninstaller "$INSTDIR\uninstall.exe"
+
+  ; Start menu shortcuts
+  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\app.exe"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+SectionEnd
+
+Section "Desktop Shortcut" SecDesktop
+  CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\app.exe"
+SectionEnd
+
+Function .onInit
+  Var /GLOBAL PREV_VERSION
+
+  ReadRegStr $PREV_VERSION HKLM "Software\${PRODUCT_NAME}" "Version"
+
+  ${If} $PREV_VERSION != ""
+    MessageBox MB_YESNO "Version $PREV_VERSION is already installed. Continue?" IDYES +2
+      Abort
+  ${EndIf}
+FunctionEnd
+
+Section "Uninstall"
+  RMDir /r "$INSTDIR"
+  Delete "$DESKTOP\${PRODUCT_NAME}.lnk"
+  RMDir /r "$SMPROGRAMS\${PRODUCT_NAME}"
+  DeleteRegKey HKLM "Software\${PRODUCT_NAME}"
+
+  ${If} ${FileExists} "$APPDATA\${PRODUCT_NAME}"
+    MessageBox MB_YESNO "Remove application data?" IDNO +2
+      RMDir /r "$APPDATA\${PRODUCT_NAME}"
+  ${EndIf}
+SectionEnd

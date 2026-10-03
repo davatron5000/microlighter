@@ -1,0 +1,29 @@
+/**
+ * Private helper for demoCallWithoutParams, demoCallWithParams, and demoCallWithParamBlock.
+ * Reports on a trip.
+ */
+{template tripReport_ visibility="private" kind="text"}
+  {@param? name: string|null}           /** The name of the person who took a trip (optional). */
+  {@param? destination: string|null}    /** The destination of the trip (optional). */
+  // Note: The template name demonstrates the good practice of adding a trailing underscore to
+  // private templates (template that should never be called from hand-written code).
+
+  {if !$name}
+    // Note: The message below demonstrates that the 'desc' attribute can be left empty. However,
+    // this is not recommended except for the simplest messages, otherwise you risk confusing some
+    // translators and getting poor translations.
+    {msg desc=""}
+      A trip was taken.
+    {/msg}
+  {elseif !$destination}
+    {msg desc="Example: Alice took a trip."}
+      {$name} took a trip.
+    {/msg}
+  {else}
+    {msg desc="Example: Alice took a trip to wonderland."}
+      {$name} took a trip to {$destination}.
+    {/msg}
+  {/if}
+{/template}
+
+// From https://github.com/google/closure-templates/blob/master/examples/features.soy

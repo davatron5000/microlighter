@@ -1,16 +1,1 @@
-// Reference: Microsoft VS Code (MIT) — https://github.com/microsoft/vscode/blob/main/extensions/shellscript/syntaxes/shell-unix-bash.tmLanguage.json
-export default {
-  scopeName: "source.shell",
-  patterns: [
-    { match: "^#!.*$", name: "comment.line.shebang" },
-    { match: "(?!^#!)#.*$", name: "comment.line.number-sign" },
-    { match: "'(?:[^']*)'", name: "string.quoted.single" },
-    { match: "\"(?:\\\\.|[^\"\\\\])*\"", name: "string.quoted.double" },
-    { match: "\\$[a-zA-Z_][\\w]*|\\$\\d+|\\$[?@*#$!_-]|\\$\\{[^}]+\\}", name: "entity.name.variable" },
-    { match: "\\b([a-zA-Z_][\\w]*)(?==)", captures: { 1: { name: "entity.name.variable.assignment" } } },
-    { match: "\\b(?:if|then|else|elif|fi|for|while|until|in|do|done|case|esac|function|select|time|coproc)\\b", name: "keyword.control" },
-    { match: "(?:&&|\\|\\||[|&;])", name: "keyword.operator" },
-    { match: "(?<![\\w-])--?[a-zA-Z][\\w-]*(?:=[^\\s]+)?", name: "constant.language.option" },
-    { match: "(?<![\\w.])-?\\d+(?:\\.\\d+)?\\b", name: "constant.numeric" }
-  ]
-};
+export { default } from "./shellscript.js";

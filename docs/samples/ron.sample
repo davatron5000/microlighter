@@ -1,0 +1,28 @@
+GameConfig( // optional struct name
+    window_size: (800, 600),
+    window_title: "PAC-MAN - \"Escape from New York\"",
+    fullscreen: false,
+
+    mouse_sensitivity: 1.4,
+    key_bindings: {
+        "up": Up,
+        "down": Down,
+        "left": Left,
+        "right": Right,
+
+        // Uncomment to enable WASD controls
+        /*
+        "W": Up,
+        "S": Down,
+        "A": Left,
+        "D": Right,
+        */
+    },
+
+    difficulty_options: (
+        start_difficulty: Easy,
+        adaptive: false,
+    ),
+)
+
+// From https://github.com/a5huynh/vscode-ron/blob/master/docs/example.ron

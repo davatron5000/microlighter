@@ -8,21 +8,17 @@
  * @property {Map<string, Grammar>} scopes Grammars keyed by TextMate scope name.
  */
 
-/** @type {Record<string, string>} */
+/**
+ * Language aliases are shipped as re-export modules in `grammars/` (e.g.
+ * `js.js` → `javascript.js`), so only the few that cannot be file names
+ * are mapped here.
+ * @type {Record<string, string>}
+ */
 const languageAliases = {
-  docker: "dockerfile",
-  gql: "graphql",
-  js: "javascript",
-  jsx: "javascript",
-  md: "markdown",
-  py: "python",
-  rb: "ruby",
-  sass: "scss",
-  sh: "bash",
-  shell: "bash",
-  ts: "typescript",
-  yml: "yaml",
-  zsh: "bash"
+  "c++": "cpp",
+  "c#": "csharp",
+  "f#": "fsharp",
+  "文言": "wenyan"
 };
 
 /**
@@ -48,7 +44,7 @@ export const getExternalLanguages = value => {
   const visit = item => {
     if (Array.isArray(item)) {
       item.forEach(visit);
-    } else if (item && typeof item === "object") {
+    } else if (item && typeof item === "object" && !(item instanceof RegExp)) {
       if (typeof item.include === "string" && !/^[#$]/.test(item.include)) {
         const scope = item.include.split("#")[0];
         const match = scope.match(/^(?:source|text)\.([a-z0-9_-]+)/);

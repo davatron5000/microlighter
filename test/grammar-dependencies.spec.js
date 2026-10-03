@@ -7,7 +7,6 @@ import {
   normalizeLanguage
 } from "../src/grammar-dependencies.js";
 import cpp from "../src/grammars/cpp.js";
-import heex from "../src/grammars/heex.js";
 import html from "../src/grammars/html.js";
 import markdown from "../src/grammars/markdown.js";
 import objectiveC from "../src/grammars/objective-c.js";
@@ -49,24 +48,40 @@ test("recognizes source and text scopes but ignores unsupported includes", () =>
   assert.deepEqual([...getExternalLanguages(grammar)], ["html", "css"]);
 });
 
-test("normalizes language aliases and preserves canonical names", () => {
-  assert.equal(normalizeLanguage("jsx"), "javascript");
-  assert.equal(normalizeLanguage("sass"), "scss");
+test("normalizes only aliases that cannot be grammar file names", () => {
+  assert.equal(normalizeLanguage("c#"), "csharp");
+  assert.equal(normalizeLanguage("c++"), "cpp");
+  // File-name-safe aliases resolve through re-export modules instead.
+  assert.equal(normalizeLanguage("js"), "js");
   assert.equal(normalizeLanguage("python"), "python");
   assert.equal(normalizeLanguage("custom-language"), "custom-language");
+  assert.equal(normalizeLanguage("ecmascript", { ecmascript: "javascript" }), "javascript");
 });
 
-test("reports dependencies used by the shipped grammars", () => {
-  assert.deepEqual([...getExternalLanguages(scss)], ["css"]);
-  assert.deepEqual([...getExternalLanguages(markdown)], ["yaml"]);
-  assert.deepEqual([...getExternalLanguages(typescript)], ["js"]);
-  assert.deepEqual([...getExternalLanguages(html)], ["css", "json", "js"]);
-  assert.deepEqual([...getExternalLanguages(cpp)], ["c"]);
-  assert.deepEqual([...getExternalLanguages(tsx)], ["js", "ts"]);
-  assert.deepEqual([...getExternalLanguages(objectiveC)], ["c"]);
-  assert.deepEqual(heex.dependencies, ["html", "elixir"]);
-  assert.deepEqual(svelte.dependencies, ["html", "css", "scss", "javascript", "typescript"]);
-  assert.deepEqual(vue.dependencies, ["html", "css", "scss", "javascript", "typescript"]);
+test("declares embedded grammars as dependencies of each precompiled grammar", () => {
+  assert.deepEqual(scss.dependencies, ["css"]);
+  assert.deepEqual(html.dependencies, ["javascript", "css"]);
+  assert.deepEqual(markdown.dependencies, []);
+  assert.deepEqual(cpp.dependencies, ["cpp-macro", "regexp", "glsl"]);
+  assert.ok(svelte.dependencies.includes("javascript"));
+  assert.ok(vue.dependencies.includes("vue-directives"));
+  // Scope includes are not scanned when a grammar declares its dependencies.
+  assert.deepEqual([...getExternalLanguages(typescript)], []);
+  assert.deepEqual([...getExternalLanguages(tsx)], []);
+  assert.deepEqual([...getExternalLanguages(objectiveC)], []);
+});
+
+test("compiles anchors as variants and end backreferences as markers", () => {
+  const styleBlock = html.repository["tags-valid"].patterns[0].patterns[0].patterns[1];
+  assert.deepEqual(Object.keys(styleBlock.begin), ["G"]);
+  assert.equal(styleBlock.begin.G.length, 2);
+  assert.ok(styleBlock.begin.G.every(variant => variant instanceof RegExp));
+
+  const frontMatter = markdown.repository.frontMatter.begin;
+  assert.deepEqual(Object.keys(frontMatter), ["A"]);
+
+  const langTag = vue.patterns.find(rule => rule.end instanceof RegExp && rule.patterns)?.patterns[0];
+  assert.match(langTag.end.source, /\uE0001\uE001/);
 });
 
 test("loads external dependencies once and indexes grammars by language and scope", async () => {
@@ -167,27 +182,26 @@ test("dynamically loads every new canonical grammar and transitively resolves it
     assert.ok(loaded.languages[language], `expected ${language} to load`);
   }
 
-  // cpp reuses the shared C grammar via external includes.
-  assert.ok(loaded.languages.c, "cpp should transitively load c");
+  // cpp declares c, glsl and regexp as dependencies; they load once and are
+  // indexed by scope for the includes that reference them.
   assert.equal(loaded.scopes.get("source.c"), loaded.languages.c);
-
-  // tsx reuses TypeScript and JavaScript via external includes.
-  assert.ok(loaded.languages.javascript, "tsx should transitively load javascript");
-  assert.ok(loaded.languages.typescript, "tsx should transitively load typescript");
+  assert.ok(loaded.languages.glsl, "cpp should transitively load glsl");
+  assert.equal(loaded.scopes.get("source.glsl"), loaded.languages.glsl);
+  assert.equal(loaded.scopes.get("source.tsx"), loaded.languages.tsx);
 });
 
-test("loads normalized first-party aliases by canonical language", async () => {
+test("loads first-party aliases through their re-export modules", async () => {
   const load = createGrammarLoader();
-  const loaded = await load([normalizeLanguage("js")]);
+  const loaded = await load(["js", "javascript"]);
 
-  assert.ok(loaded.languages.javascript);
-  assert.equal(loaded.languages.js, undefined);
+  assert.equal(loaded.languages.js, loaded.languages.javascript);
+  assert.equal(loaded.languages.js.scopeName, "source.js");
   assert.equal(loaded.scopes.get("source.js"), loaded.languages.javascript);
 });
 
-test("dynamically loads every second-batch canonical grammar and transitively resolves its dependencies", async () => {
+test("dynamically loads every second-batch canonical grammar", async () => {
   const load = createGrammarLoader();
-  const newLanguages = ["objective-c", "lua", "dart", "assembly", "perl", "r"];
+  const newLanguages = ["objective-c", "lua", "dart", "asm", "perl", "r"];
 
   const loaded = await load(newLanguages);
 
@@ -195,7 +209,8 @@ test("dynamically loads every second-batch canonical grammar and transitively re
     assert.ok(loaded.languages[language], `expected ${language} to load`);
   }
 
-  // objective-c reuses the shared C grammar via external includes.
-  assert.ok(loaded.languages.c, "objective-c should transitively load c");
+  // lua depends on the shared C grammar for its embedded C API blocks.
+  assert.ok(loaded.languages.c, "lua should transitively load c");
   assert.equal(loaded.scopes.get("source.c"), loaded.languages.c);
+  assert.equal(loaded.scopes.get("source.objc"), loaded.languages["objective-c"]);
 });

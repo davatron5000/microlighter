@@ -1,69 +1,417 @@
-// Reference: Microsoft VS Code (MIT) — https://github.com/microsoft/vscode/blob/main/extensions/kotlin (community grammar conventions)
+import { EmulatedRegExp } from "oniguruma-to-es";
+
 export default {
+  name: "kotlin",
+  displayName: "Kotlin",
+  aliases: [
+    "kt",
+    "kts"
+  ],
   scopeName: "source.kotlin",
   patterns: [
-    { include: "#comments" },
-    { include: "#strings" },
-    { include: "#annotations" },
-    { include: "#class-declaration" },
-    { include: "#function-declaration" },
-    { include: "#keywords" },
-    { include: "#builtin-types" },
-    { include: "#constants" },
-    { include: "#numbers" },
-    { include: "#operators" }
+    { include: "#import" },
+    { include: "#package" },
+    { include: "#code" }
   ],
   repository: {
+    "annotation-simple": {
+      match: /(?<![\p{L}\p{M}\p{N}\p{Pc}])@[\.\p{L}\p{M}\p{N}\p{Pc}]+\b(?!:)/dgv,
+      name: "entity.name.type.annotation.kotlin"
+    },
+    "annotation-site": {
+      begin: /(?<![\p{L}\p{M}\p{N}\p{Pc}])(@[\p{L}\p{M}\p{N}\p{Pc}]+):\p{space}*(?!\[)/dgv,
+      beginCaptures: {
+        "1": { name: "entity.name.type.annotation-site.kotlin" }
+      },
+      end: /(?=\n?$)/dgv,
+      patterns: [
+        { include: "#unescaped-annotation" }
+      ]
+    },
+    "annotation-site-list": {
+      begin: /(?<![\p{L}\p{M}\p{N}\p{Pc}])(@[\p{L}\p{M}\p{N}\p{Pc}]+):\p{space}*\[/dgv,
+      beginCaptures: {
+        "1": { name: "entity.name.type.annotation-site.kotlin" }
+      },
+      end: /\]/dgv,
+      patterns: [
+        { include: "#unescaped-annotation" }
+      ]
+    },
+    "binary-literal": {
+      match: /0([Bb])[01][01_]*/dgv,
+      name: "constant.numeric.binary.kotlin"
+    },
+    "boolean-literal": {
+      match: /\b(true|false)\b/dgv,
+      name: "constant.language.boolean.kotlin"
+    },
+    character: {
+      begin: /'/dgv,
+      end: /'/dgv,
+      name: "string.quoted.single.kotlin",
+      patterns: [
+        {
+          match: /\\[^\n]/dgv,
+          name: "constant.character.escape.kotlin"
+        }
+      ]
+    },
+    "class-declaration": {
+      captures: {
+        "1": { name: "keyword.hard.class.kotlin" },
+        "2": { name: "entity.name.type.class.kotlin" },
+        "3": {
+          patterns: [
+            { include: "#type-parameter" }
+          ]
+        }
+      },
+      match: new EmulatedRegExp("\\b(class|(?:fun\\p{space}+)?interface)\\p{space}+(\\b[\\p{L}\\p{M}\\p{N}\\p{Pc}]+\\b|`[^\\`]+`)\\p{space}*(?<GROUP><([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:))+>))+>))+>))+>))+>)?", "dgv", { hiddenCaptures: [5, 6, 7, 8] })
+    },
+    code: {
+      patterns: [
+        { include: "#comments" },
+        { include: "#keywords" },
+        { include: "#annotation-simple" },
+        { include: "#annotation-site-list" },
+        { include: "#annotation-site" },
+        { include: "#class-declaration" },
+        { include: "#object" },
+        { include: "#type-alias" },
+        { include: "#function" },
+        { include: "#variable-declaration" },
+        { include: "#type-constraint" },
+        { include: "#type-annotation" },
+        { include: "#function-call" },
+        { include: "#method-reference" },
+        { include: "#key" },
+        { include: "#string" },
+        { include: "#string-empty" },
+        { include: "#string-multiline" },
+        { include: "#character" },
+        { include: "#lambda-arrow" },
+        { include: "#operators" },
+        { include: "#self-reference" },
+        { include: "#decimal-literal" },
+        { include: "#hex-literal" },
+        { include: "#binary-literal" },
+        { include: "#boolean-literal" },
+        { include: "#null-literal" }
+      ]
+    },
+    "comment-block": {
+      begin: /\/\*(?!\*)/dgv,
+      end: /\*\//dgv,
+      name: "comment.block.kotlin"
+    },
+    "comment-javadoc": {
+      patterns: [
+        {
+          begin: /\/\*\*/dgv,
+          end: /\*\//dgv,
+          name: "comment.block.javadoc.kotlin",
+          patterns: [
+            {
+              match: /@(return|constructor|receiver|sample|see|author|since|suppress)\b/dgv,
+              name: "keyword.other.documentation.javadoc.kotlin"
+            },
+            {
+              captures: {
+                "1": { name: "keyword.other.documentation.javadoc.kotlin" },
+                "2": { name: "variable.parameter.kotlin" }
+              },
+              match: /(@p(?:aram|roperty))\p{space}+(\P{space}+)/dgv
+            },
+            {
+              captures: {
+                "1": { name: "keyword.other.documentation.javadoc.kotlin" },
+                "2": { name: "variable.parameter.kotlin" }
+              },
+              match: /(@param)\[(\P{space}+)\]/dgv
+            },
+            {
+              captures: {
+                "1": { name: "keyword.other.documentation.javadoc.kotlin" },
+                "2": { name: "entity.name.type.class.kotlin" }
+              },
+              match: /(@(?:exception|throws))\p{space}+(\P{space}+)/dgv
+            },
+            {
+              captures: {
+                "1": { name: "keyword.other.documentation.javadoc.kotlin" },
+                "2": { name: "entity.name.type.class.kotlin" },
+                "3": { name: "variable.parameter.kotlin" }
+              },
+              match: /\{(@link)\p{space}+(\P{space}+)?#([\$\p{L}\p{M}\p{N}\p{Pc}]+\p{space}*\([^\(\)]*\))[^\n]*\}/dgv
+            }
+          ]
+        }
+      ]
+    },
+    "comment-line": {
+      begin: /\/\//dgv,
+      end: /(?=\n?$)/dgv,
+      name: "comment.line.double-slash.kotlin"
+    },
     comments: {
       patterns: [
-        { match: "//.*$", name: "comment.line.double-slash" },
-        { begin: "/\\*", end: "\\*/", name: "comment.block" }
+        { include: "#comment-line" },
+        { include: "#comment-block" },
+        { include: "#comment-javadoc" }
       ]
     },
-    strings: {
+    "control-keywords": {
+      match: /\b(if|else|while|do|when|try|throw|break|continue|return|for)\b/dgv,
+      name: "keyword.control.kotlin"
+    },
+    "decimal-literal": {
+      match: /\b\p{Nd}[_\p{Nd}]*(\.[_\p{Nd}]+)?(([Ee])\p{Nd}+)?([Uu])?([FLf])?\b/dgv,
+      name: "constant.numeric.decimal.kotlin"
+    },
+    function: {
+      captures: {
+        "1": { name: "keyword.hard.fun.kotlin" },
+        "2": {
+          patterns: [
+            { include: "#type-parameter" }
+          ]
+        },
+        "4": { name: "entity.name.type.class.extension.kotlin" },
+        "5": { name: "entity.name.function.declaration.kotlin" }
+      },
+      match: new EmulatedRegExp("\\b(fun)\\b\\p{space}*(?<GROUP><([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:))+>))+>))+>))+>))+>)?\\p{space}*(?:(?:([\\p{L}\\p{M}\\p{N}\\p{Pc}]+)\\.)?(\\b[\\p{L}\\p{M}\\p{N}\\p{Pc}]+\\b|`[^\\`]+`))?", "dgv", { hiddenCaptures: [4, 5, 6, 7] })
+    },
+    "function-call": {
+      captures: {
+        "1": { name: "entity.name.function.call.kotlin" },
+        "2": {
+          patterns: [
+            { include: "#type-parameter" }
+          ]
+        }
+      },
+      match: new EmulatedRegExp("\\??\\.?(\\b[\\p{L}\\p{M}\\p{N}\\p{Pc}]+\\b|`[^\\`]+`)\\p{space}*(?<GROUP><([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:))+>))+>))+>))+>))+>)?\\p{space}*(?=[\\(\\{])", "dgv", { hiddenCaptures: [4, 5, 6, 7] })
+    },
+    "hard-keywords": {
+      match: /\b(as|typeof|is|in)\b/dgv,
+      name: "keyword.hard.kotlin"
+    },
+    "hex-literal": {
+      match: /0([Xx])\p{AHex}[_\p{AHex}]*([Uu])?/dgv,
+      name: "constant.numeric.hex.kotlin"
+    },
+    import: {
+      begin: /\b(import)\b\p{space}*/dgv,
+      beginCaptures: {
+        "1": { name: "keyword.soft.kotlin" }
+      },
+      contentName: "entity.name.package.kotlin",
+      end: /;|(?=\n?$)/dgv,
+      name: "meta.import.kotlin",
       patterns: [
-        { begin: "\"\"\"", end: "\"\"\"", name: "string.quoted.triple" },
-        { match: "\"(?:\\\\.|[^\"\\\\\\r\\n])*\"", name: "string.quoted.double" },
-        { match: "'(?:\\\\.|[^'\\\\\\r\\n])'", name: "string.quoted.char" }
+        { include: "#comments" },
+        { include: "#hard-keywords" },
+        {
+          match: /\*/dgv,
+          name: "variable.language.wildcard.kotlin"
+        }
       ]
     },
-    annotations: { match: "@[A-Za-z_][\\w.]*", name: "entity.name.decorator" },
-    "class-declaration": {
-      match: "\\b(?:(data|sealed|abstract|open|inner|enum|annotation)\\s+)?(class|interface|object)\\s+([A-Za-z_]\\w*)",
+    key: {
       captures: {
-        1: { name: "storage.modifier" },
-        2: { name: "storage.type.class" },
-        3: { name: "entity.name.type.class" }
-      }
-    },
-    "function-declaration": {
-      match: "\\b(fun)\\s+([A-Za-z_]\\w*)",
-      captures: {
-        1: { name: "storage.type.function" },
-        2: { name: "entity.name.function" }
-      }
+        "1": { name: "variable.parameter.kotlin" },
+        "2": { name: "keyword.operator.assignment.kotlin" }
+      },
+      match: /\b([\p{L}\p{M}\p{N}\p{Pc}]=)\p{space}*(=)/dgv
     },
     keywords: {
-      match: "\\b(?:abstract|actual|annotation|as|break|by|catch|companion|const|constructor|continue|crossinline|data|delegate|do|dynamic|else|enum|expect|external|final|finally|for|get|if|import|in|infix|init|inline|inner|internal|is|lateinit|noinline|open|operator|out|override|package|private|protected|public|reified|return|sealed|set|super|suspend|tailrec|this|throw|try|typealias|val|var|vararg|when|where|while)\\b",
-      name: "keyword.control"
-    },
-    "builtin-types": {
-      match: "\\b(?:Any|Array|Boolean|Byte|Char|Double|Float|Int|List|Long|Map|MutableList|MutableMap|MutableSet|Nothing|Set|Short|String|Unit)\\b",
-      name: "support.class.builtin"
-    },
-    constants: {
       patterns: [
-        { match: "\\b(?:true|false)\\b", name: "constant.language.boolean" },
-        { match: "\\bnull\\b", name: "constant.language" }
+        { include: "#prefix-modifiers" },
+        { include: "#postfix-modifiers" },
+        { include: "#soft-keywords" },
+        { include: "#hard-keywords" },
+        { include: "#control-keywords" }
       ]
     },
-    numbers: {
-      match: "(?<![\\w.])(?:0[xX][0-9a-fA-F_]+|0[bB][01_]+|\\d(?:_?\\d)*(?:\\.\\d(?:_?\\d)*)?(?:[eE][+-]?\\d+)?)[fFLuU]*\\b",
-      name: "constant.numeric"
+    "lambda-arrow": {
+      match: /->/dgv,
+      name: "storage.type.function.arrow.kotlin"
+    },
+    "method-reference": {
+      captures: {
+        "1": { name: "entity.name.function.reference.kotlin" }
+      },
+      match: /\??::(\b[\p{L}\p{M}\p{N}\p{Pc}]+\b|`[^\`]+`)/dgv
+    },
+    "null-literal": {
+      match: /\bnull\b/dgv,
+      name: "constant.language.null.kotlin"
+    },
+    object: {
+      captures: {
+        "1": { name: "keyword.hard.object.kotlin" },
+        "2": { name: "entity.name.type.object.kotlin" }
+      },
+      match: /\b(object)(?:\p{space}+(\b[\p{L}\p{M}\p{N}\p{Pc}]+\b|`[^\`]+`))?/dgv
     },
     operators: {
-      match: "(?:->|\\?:|\\?\\.|!!|\\.\\.|::|&&|\\|\\||==|!=|<=|>=|[+\\-*/%!<>=]=?)",
-      name: "keyword.operator"
+      patterns: [
+        {
+          match: /(===?|!==?|<=|>=|[\<\>])/dgv,
+          name: "keyword.operator.comparison.kotlin"
+        },
+        {
+          match: /([\-\%\*\+\/]=)/dgv,
+          name: "keyword.operator.assignment.arithmetic.kotlin"
+        },
+        {
+          match: /(=)/dgv,
+          name: "keyword.operator.assignment.kotlin"
+        },
+        {
+          match: /([\-\%\*\+\/])/dgv,
+          name: "keyword.operator.arithmetic.kotlin"
+        },
+        {
+          match: /(!|&&|\|\|)/dgv,
+          name: "keyword.operator.logical.kotlin"
+        },
+        {
+          match: /(--|\+\+)/dgv,
+          name: "keyword.operator.increment-decrement.kotlin"
+        },
+        {
+          match: /(\.\.)/dgv,
+          name: "keyword.operator.range.kotlin"
+        }
+      ]
+    },
+    package: {
+      begin: /\b(package)\b\p{space}*/dgv,
+      beginCaptures: {
+        "1": { name: "keyword.hard.package.kotlin" }
+      },
+      contentName: "entity.name.package.kotlin",
+      end: /;|(?=\n?$)/dgv,
+      name: "meta.package.kotlin",
+      patterns: [
+        { include: "#comments" }
+      ]
+    },
+    "postfix-modifiers": {
+      match: /\b(where|by|get|set)\b/dgv,
+      name: "storage.modifier.other.kotlin"
+    },
+    "prefix-modifiers": {
+      match: /\b(abstract|final|enum|open|annotation|sealed|data|override|final|lateinit|private|protected|public|internal|inner|companion|noinline|crossinline|vararg|reified|tailrec|operator|infix|inline|external|const|suspend|value)\b/dgv,
+      name: "storage.modifier.other.kotlin"
+    },
+    "self-reference": {
+      match: /\b(this|super)(@[\p{L}\p{M}\p{N}\p{Pc}]+)?\b/dgv,
+      name: "variable.language.this.kotlin"
+    },
+    "soft-keywords": {
+      match: /\b(init|catch|finally|field)\b/dgv,
+      name: "keyword.soft.kotlin"
+    },
+    string: {
+      begin: /(?<!")"(?!")/dgv,
+      end: /"/dgv,
+      name: "string.quoted.double.kotlin",
+      patterns: [
+        {
+          match: /\\[^\n]/dgv,
+          name: "constant.character.escape.kotlin"
+        },
+        { include: "#string-escape-simple" },
+        { include: "#string-escape-bracketed" }
+      ]
+    },
+    "string-empty": {
+      match: /(?<!")""(?!")/dgv,
+      name: "string.quoted.double.kotlin"
+    },
+    "string-escape-bracketed": {
+      begin: /(?<!\\)(\$\{)/dgv,
+      beginCaptures: {
+        "1": { name: "punctuation.definition.template-expression.begin" }
+      },
+      end: /(\})/dgv,
+      endCaptures: {
+        "1": { name: "punctuation.definition.template-expression.end" }
+      },
+      name: "meta.template.expression.kotlin",
+      patterns: [
+        { include: "#code" }
+      ]
+    },
+    "string-escape-simple": {
+      match: /(?<!\\)\$[\p{L}\p{M}\p{N}\p{Pc}]+\b/dgv,
+      name: "variable.string-escape.kotlin"
+    },
+    "string-multiline": {
+      begin: /"""/dgv,
+      end: /"""/dgv,
+      name: "string.quoted.double.kotlin",
+      patterns: [
+        {
+          match: /\\[^\n]/dgv,
+          name: "constant.character.escape.kotlin"
+        },
+        { include: "#string-escape-simple" },
+        { include: "#string-escape-bracketed" }
+      ]
+    },
+    "type-alias": {
+      captures: {
+        "1": { name: "keyword.hard.typealias.kotlin" },
+        "2": { name: "entity.name.type.kotlin" },
+        "3": {
+          patterns: [
+            { include: "#type-parameter" }
+          ]
+        }
+      },
+      match: new EmulatedRegExp("\\b(typealias)\\p{space}+(\\b[\\p{L}\\p{M}\\p{N}\\p{Pc}]+\\b|`[^\\`]+`)\\p{space}*(?<GROUP><([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:))+>))+>))+>))+>))+>)?", "dgv", { hiddenCaptures: [5, 6, 7, 8] })
+    },
+    "type-annotation": {
+      captures: {
+        "0": {
+          patterns: [
+            { include: "#type-parameter" }
+          ]
+        }
+      },
+      match: new EmulatedRegExp("(?<![\\:\\?]):\\p{space}*([\\?\\p{L}\\p{M}\\p{N}\\p{Pc}\\p{space}]|->|(?<GROUP>[\\(\\<]([^\"'\\(\\)\\<\\>]|(?:[\\(\\<]([^\"'\\(\\)\\<\\>]|(?:[\\(\\<]([^\"'\\(\\)\\<\\>]|(?:[\\(\\<]([^\"'\\(\\)\\<\\>]|(?:[\\(\\<]([^\"'\\(\\)\\<\\>]|(?:))+[\\)\\>]))+[\\)\\>]))+[\\)\\>]))+[\\)\\>]))+[\\)\\>]))+", "dgv", { hiddenCaptures: [4, 5, 6, 7] })
+    },
+    "type-parameter": {
+      patterns: [
+        {
+          match: /\b[\p{L}\p{M}\p{N}\p{Pc}]+\b/dgv,
+          name: "entity.name.type.kotlin"
+        },
+        {
+          match: /\b(in|out)\b/dgv,
+          name: "storage.modifier.kotlin"
+        }
+      ]
+    },
+    "unescaped-annotation": {
+      match: /\b[\.\p{L}\p{M}\p{N}\p{Pc}]+\b/dgv,
+      name: "entity.name.type.annotation.kotlin"
+    },
+    "variable-declaration": {
+      captures: {
+        "1": { name: "keyword.hard.kotlin" },
+        "2": {
+          patterns: [
+            { include: "#type-parameter" }
+          ]
+        }
+      },
+      match: new EmulatedRegExp("\\b(va[lr])\\b\\p{space}*(?<GROUP><([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:<([^\\<\\>]|(?:))+>))+>))+>))+>))+>)?", "dgv", { hiddenCaptures: [4, 5, 6, 7] })
     }
-  }
+  },
+  dependencies: []
 };

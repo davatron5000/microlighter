@@ -1,0 +1,32 @@
+# pan93412 <pan93412@gmail.com>, 2019.
+msgid ""
+msgstr ""
+"Project-Id-Version: pan 93412\n"
+"POT-Creation-Date: 2023-11-05 12:30+0000\n"
+"PO-Revision-Date: 2019-10-09 20:54+0800\n"
+"Last-Translator: pan93412 <pan93412@gmail.com>\n"
+"Language-Team: Chinese <zh-l10n@lists.linux.org.tw>\n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Lokalize 19.08.1\n"
+
+#. (itstool) path: component/name
+#: org.kde.ffmpegthumbs.metainfo.xml:9
+msgid "FFmpeg Thumbnailer"
+msgstr "FFmpeg 縮圖產生工具"
+
+#. (itstool) path: component/summary
+#: org.kde.ffmpegthumbs.metainfo.xml:10
+msgid "Video thumbnail generator using FFmpeg"
+msgstr "使用 FFmpeg 的影片縮圖產生工具"
+
+#. (itstool) path: description/p
+#: org.kde.ffmpegthumbs.metainfo.xml:12
+msgid ""
+"FFmpeg Thumbnailer is a video thumbnail generator for KDE file managers."
+msgstr "FFmpeg 縮圖產生工具是用於 KDE 檔案管理器的影片縮圖產生器。"
+
+// From https://websvn.kde.org/trunk/l10n-kf5/zh_TW/messages/ffmpegthumbs/org.kde.ffmpegthumbs.metainfo.po?view=markup

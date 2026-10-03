@@ -1,0 +1,47 @@
+# Signatures for a small greeting library.
+
+use RBS::Namespace as NS
+
+type name = String | Symbol
+type mode = "r" | "w" | "rw"
+
+interface _Greetable
+  def greet: () -> String
+end
+
+class Container[out T]
+  def get: () -> T
+end
+
+module Greeting
+  VERSION: String
+
+  class Person
+    include Comparable
+    extend Forwardable
+
+    attr_reader name: name
+    attr_accessor age: Integer?
+
+    @nickname: String?
+
+    def initialize: (name: name, ?age: Integer?) -> void
+
+    def greet: (?prefix: String) { (String) -> void } -> String
+
+    def self.anonymous: () -> instance
+
+    def self.factory: () -> singleton(Person)
+
+    def to_raw: () -> untyped
+
+    def valid?: () -> bool
+
+    def reset: () -> void
+
+    private def secret: () -> bool
+
+    alias display greet
+  end
+end
+# From https://github.com/ruby/rbs/blob/master/docs/syntax.md

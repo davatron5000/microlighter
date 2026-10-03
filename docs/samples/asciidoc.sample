@@ -1,0 +1,28 @@
+= Heading level 1
+:showtitle:
+
+This is a short presentation on AsciiDoc's core capabilities.
+Preview as you type, including formatting like *this*, or _this_.
+
+== You can also add your custom CSS style
+It will automatically refresh, just as you type
+
+== Heading level 2
+Different heading levels are easily found with the # symbol .
+You can also do _italic_ or *bold* like in the more common mark down.
+
+AsciiDoc supports tables and much more.
+[width="15%"]
+|=======
+|1 |2 |A
+|3 |4 |B
+|5 |6 |C
+|=======
+
+.Bulleted List
+* item 1
+* More items
+    - One more
+    - And again
+
+// From https://github.com/asciidoctor/asciidoctor-vscode/blob/master/examples/simple.adoc

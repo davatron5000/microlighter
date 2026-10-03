@@ -2,7 +2,7 @@
 import { gzipSync, brotliCompressSync, constants } from "node:zlib";
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join, relative } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
@@ -93,10 +93,10 @@ const getSizes = path => {
 };
 
 const listing = dir =>
-  readdirSync(join(root, dir))
-    .filter(name => !name.startsWith("index.") && !name.endsWith(".d.ts"))
-    .sort()
-    .map(name => join(dir, name));
+  readdirSync(join(root, dir), { withFileTypes: true })
+    .flatMap(entry => entry.isDirectory() ? listing(join(dir, entry.name)) : [join(dir, entry.name)])
+    .filter(path => !basename(path).startsWith("index.") && !/\.d\.m?ts$/.test(path))
+    .sort();
 
 const printTable = (title, rows, columns) => {
   console.log(`\n${title}`);

@@ -1,0 +1,13 @@
+2018-01-27 10:38:20.442 [8988] INFO  [Bootstrapper]: Hello World
+2018-01-27 10:38:20.443 [8988] INFO  [Bootstrapper]: Hello World
+2018-01-27 10:38:25.459 [8988] INFO  [Bootstrapper]: Hello World
+2018-01-27 10:38:25.459 [8988] INFO  [Bootstrapper]: Hello World
+27.01.2018 19:38:28,982 [8988] Verbose [Application]: Hello World
+27.01.2018 19:38:28,982 [8988] VERBOSE [Application]: Hello World
+27.01.2018 19:38:28,982 [8988] [verbose] [Application]: Hello World
+27.01.2018 19:38:28,982 [8988] verbose: [Application]: Hello World
+27.01.2018 19:38:28,982 [8988] E/Application: It crashed!
+27.01.2018 19:38:28,982 [8988] E/MyService: It crashed!
+27.01.2018 19:38:28,982 [8988] E/Subservice: It crashed!
+
+// From https://github.com/emilast/vscode-logfile-highlighter/blob/master/test/integrationtest/testLogs/firstLog.log

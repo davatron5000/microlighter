@@ -1,0 +1,7 @@
+module ExampleModule
+CustomButton 2.0 CustomButton20.qml
+CustomButton 2.1 CustomButton21.qml
+plugin examplemodule
+MathFunctions 2.0 mathfuncs.js
+
+# From https://doc.qt.io/qt-6/qtqml-modules-qmldir.html#example-of-a-qmldir-file

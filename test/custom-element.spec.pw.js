@@ -7,11 +7,18 @@ test.describe("MicroLighter custom element", () => {
     await expect(page.locator("micro-lighter")).toHaveCount(4);
     await expect(page.getByRole("button", { name: "Copy" })).toHaveCount(4);
 
+    // Every element highlights, including those whose language comes from the
+    // element attribute and is stamped onto the code block during upgrade.
     await expect.poll(() => page.evaluate(() => {
-      let total = 0;
-      for (const highlight of CSS.highlights.values()) total += highlight.size;
-      return total;
-    })).toBeGreaterThan(0);
+      const highlighted = new Set();
+      for (const highlight of CSS.highlights.values()) {
+        for (const range of highlight) {
+          const host = range.startContainer.parentElement?.closest("micro-lighter");
+          if (host) highlighted.add([...document.querySelectorAll("micro-lighter")].indexOf(host));
+        }
+      }
+      return [...highlighted].sort();
+    })).toEqual([0, 1, 2, 3]);
 
     await page.selectOption("#theme", "dracula");
     await expect(page.locator("html")).toHaveAttribute("data-syntax-theme", "dracula");

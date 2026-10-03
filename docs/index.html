@@ -121,7 +121,7 @@
       <article class="feature">
         <span class="feature-index" aria-hidden="true">02</span>
         <div class="feature-specimen size-specimen" aria-hidden="true">
-          <span class="size-value">2.09</span><span class="size-unit">kb<br>gzip</span>
+          <span class="size-value">3.20</span><span class="size-unit">kb<br>gzip</span>
         </div>
         <h2>Blazingly fast!!</h2>
       </article>
@@ -341,74 +341,9 @@ export function YetAnotherTodoApp(): JSX.Element {
 
     <section class="language-index" aria-labelledby="language-index-heading">
       <h2 id="language-index-heading">Supported languages</h2>
-      <p>Every grammar below ships as its own module and loads only when a page actually uses it. That includes formats like Git diff and config languages like TOML that aren't strictly "programming languages" but still get real TextMate scoping.</p>
-      <div class="language-groups">
-        <div class="language-group">
-          <h3>Web</h3>
-          <ul>
-            <li data-lang="html">HTML</li>
-            <li data-lang="css">CSS</li>
-            <li data-lang="scss">SCSS</li>
-            <li data-lang="javascript">JavaScript</li>
-            <li data-lang="typescript">TypeScript</li>
-            <li data-lang="tsx">TSX</li>
-            <li data-lang="astro">Astro</li>
-            <li data-lang="svelte">Svelte</li>
-            <li data-lang="vue">Vue</li>
-            <li data-lang="heex">HEEx</li>
-          </ul>
-        </div>
-        <div class="language-group">
-          <h3>Systems</h3>
-          <ul>
-            <li data-lang="c">C</li>
-            <li data-lang="cpp">C++</li>
-            <li data-lang="rust">Rust</li>
-            <li data-lang="go">Go</li>
-            <li data-lang="assembly">Assembly</li>
-          </ul>
-        </div>
-        <div class="language-group">
-          <h3>Application</h3>
-          <ul>
-            <li data-lang="java">Java</li>
-            <li data-lang="csharp">C#</li>
-            <li data-lang="kotlin">Kotlin</li>
-            <li data-lang="swift">Swift</li>
-            <li data-lang="objective-c">Objective-C</li>
-            <li data-lang="dart">Dart</li>
-            <li data-lang="php">PHP</li>
-            <li data-lang="elixir">Elixir</li>
-          </ul>
-        </div>
-        <div class="language-group">
-          <h3>Scripting</h3>
-          <ul>
-            <li data-lang="python">Python</li>
-            <li data-lang="ruby">Ruby</li>
-            <li data-lang="bash">Bash</li>
-            <li data-lang="perl">Perl</li>
-            <li data-lang="powershell">PowerShell</li>
-            <li data-lang="lua">Lua</li>
-            <li data-lang="r">R</li>
-          </ul>
-        </div>
-        <div class="language-group">
-          <h3>Data, config &amp; docs</h3>
-          <ul>
-            <li data-lang="json">JSON</li>
-            <li data-lang="yaml">YAML</li>
-            <li data-lang="toml">TOML</li>
-            <li data-lang="sql">SQL</li>
-            <li data-lang="markdown">Markdown</li>
-            <li data-lang="graphql">GraphQL</li>
-            <li data-lang="dockerfile">Dockerfile</li>
-            <li data-lang="git-diff">Git diff</li>
-            <li data-lang="ini">INI</li>
-            <li data-lang="nginx">nginx</li>
-          </ul>
-        </div>
-      </div>
+      <p>Every grammar below ships as its own module and loads only when a page actually uses it. That includes formats like Git diff and config languages like TOML that aren't strictly "programming languages" but still get real TextMate scoping. Grammars come from <a href="https://github.com/shikijs/textmate-grammars-themes">Shiki's TextMate collection</a>.</p>
+      <!-- Populated from ./languages.js -->
+      <div class="language-groups"></div>
     </section>
 
     <section class="sample playground" aria-labelledby="playground-label">
@@ -426,278 +361,6 @@ export function YetAnotherTodoApp(): JSX.Element {
           </select>
         </label>
         <div class="playground-output" id="playground-output" aria-live="polite"></div>
-      <template data-lang="assembly" data-label="Assembly (x86 NASM)">
-        <pre><code class="language-assembly">section .data
-    msg db "tokens", 0
-section .text
-    global _start
-_start:
-    mov eax, 1
-    int 0x80</code></pre>
-      </template>
-      <template data-lang="astro" data-label="Astro">
-        <pre><code class="language-astro">---
-const greeting = "Hello";
----
-
-&lt;h1&gt;{greeting}, World!&lt;/h1&gt;
-
-&lt;style&gt;
-  h1 { color: royalblue; }
-&lt;/style&gt;</code></pre>
-      </template>
-      <template data-lang="bash" data-label="Bash">
-        <pre><code class="language-bash">#!/usr/bin/env bash
-set -euo pipefail
-
-# Rebuild dist/ and run the test suite
-npm run build &amp;&amp; npm test</code></pre>
-      </template>
-      <template data-lang="c" data-label="C">
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
-
-int main(void) {
-    printf("tokens: %d\n", 42);
-    return 0;
-}</code></pre>
-      </template>
-      <template data-lang="csharp" data-label="C#">
-        <pre><code class="language-csharp">public class Token {
-    public string Scope { get; set; } = "keyword";
-    public int Start { get; set; } = 0;
-}</code></pre>
-      </template>
-      <template data-lang="cpp" data-label="C++">
-        <pre><code class="language-cpp">#include &lt;string&gt;
-
-struct Token {
-    std::string scope;
-    int start = 0;
-};</code></pre>
-      </template>
-      <template data-lang="css" data-label="CSS">
-        <pre><code class="language-css">/* Theme a single token */
-::highlight(keyword) {
-  color: var(--syntax-keyword);
-}</code></pre>
-      </template>
-      <template data-lang="dart" data-label="Dart">
-        <pre><code class="language-dart">class Token {
-  final String scope;
-  final int start;
-  const Token(this.scope, {this.start = 0});
-}</code></pre>
-      </template>
-      <template data-lang="dockerfile" data-label="Dockerfile">
-        <pre><code class="language-dockerfile">FROM node:20-slim
-WORKDIR /app
-COPY . .
-RUN npm ci &amp;&amp; npm run build</code></pre>
-      </template>
-      <template data-lang="elixir" data-label="Elixir">
-        <pre><code class="language-elixir">defmodule Tokenizer do
-  @moduledoc "Turns source into tokens."
-
-  def tokenize(source), do: String.split(source, " ")
-end</code></pre>
-      </template>
-      <template data-lang="git-diff" data-label="Git diff">
-        <pre><code class="language-git-diff">diff --git a/src/index.js b/src/index.js
---- a/src/index.js
-+++ b/src/index.js
-@@ -1,2 +1,2 @@
--const answer = 0;
-+const answer = 42;</code></pre>
-      </template>
-      <template data-lang="go" data-label="Go">
-        <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("tokens:", 42)
-}</code></pre>
-      </template>
-      <template data-lang="graphql" data-label="GraphQL">
-        <pre><code class="language-graphql"># Fetch a token by id
-query GetToken($id: ID!) {
-  token(id: $id) {
-    scope
-  }
-}</code></pre>
-      </template>
-      <template data-lang="heex" data-label="HEEx">
-        <pre><code class="language-heex">&lt;%!-- Render the current count --%&gt;
-&lt;.button phx-click="increment" :if={@enabled}&gt;
-  &lt;%= gettext "Count" %&gt;: {@count}
-&lt;/.button&gt;</code></pre>
-      </template>
-      <template data-lang="html" data-label="HTML">
-        <pre><code class="language-html">&lt;!-- A comment stays a comment --&gt;
-&lt;button type="button" aria-pressed="false"&gt;42&lt;/button&gt;</code></pre>
-      </template>
-      <template data-lang="ini" data-label="INI">
-        <pre><code class="language-ini">; Application settings
-[server]
-port = 8080
-host = "localhost"
-ssl = true</code></pre>
-      </template>
-      <template data-lang="java" data-label="Java">
-        <pre><code class="language-java">public class Token {
-    String scope = "keyword";
-    int start = 0;
-}</code></pre>
-      </template>
-      <template data-lang="javascript" data-label="JavaScript">
-        <pre><code class="language-javascript">// Highlight everything on the page
-import { highlightAll } from "microlighter";
-
-await highlightAll();</code></pre>
-      </template>
-      <template data-lang="json" data-label="JSON">
-        <pre><code class="language-json">{
-  "name": "microlighter",
-  "version": "1.0.0"
-}</code></pre>
-      </template>
-      <template data-lang="kotlin" data-label="Kotlin">
-        <pre><code class="language-kotlin">data class Token(val scope: String, val start: Int = 0)</code></pre>
-      </template>
-      <template data-lang="lua" data-label="Lua">
-        <pre><code class="language-lua">-- Tokenize a tiny slice of source
-local function tokenize(source)
-    return source
-end</code></pre>
-      </template>
-      <template data-lang="markdown" data-label="Markdown">
-        <pre><code class="language-markdown"># MicroLighter
-
-A **tiny** syntax highlighter for the [CSS Custom Highlight API](https://developer.mozilla.org/).</code></pre>
-      </template>
-      <template data-lang="nginx" data-label="nginx">
-        <pre><code class="language-nginx">server {
-    listen 80;
-    server_name example.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-    }
-}</code></pre>
-      </template>
-      <template data-lang="objective-c" data-label="Objective-C">
-        <pre><code class="language-objective-c">@interface Token : NSObject
-@property (nonatomic, strong) NSString *scope;
-@end</code></pre>
-      </template>
-      <template data-lang="perl" data-label="Perl">
-        <pre><code class="language-perl">#!/usr/bin/env perl
-use strict;
-use warnings;
-
-my @tokens = split / /, "const x = 42";</code></pre>
-      </template>
-      <template data-lang="php" data-label="PHP">
-        <pre><code class="language-php">&lt;?php
-
-class Token {
-    public function __construct(private string $scope) {}
-}</code></pre>
-      </template>
-      <template data-lang="powershell" data-label="PowerShell">
-        <pre><code class="language-powershell"># Rebuild dist/ and run the tests
-function Invoke-Build {
-    npm run build
-}</code></pre>
-      </template>
-      <template data-lang="python" data-label="Python">
-        <pre><code class="language-python">def tokenize(source: str) -&gt; list[str]:
-    """Split source into words."""
-    return source.split()</code></pre>
-      </template>
-      <template data-lang="r" data-label="R">
-        <pre><code class="language-r"># Tokenize a tiny slice of source
-tokenize &lt;- function(source) {
-  strsplit(source, " ")
-}</code></pre>
-      </template>
-      <template data-lang="ruby" data-label="Ruby">
-        <pre><code class="language-ruby"># Count tokens in a source string
-def tokenize(source)
-  source.split(" ")
-end</code></pre>
-      </template>
-      <template data-lang="rust" data-label="Rust">
-        <pre><code class="language-rust">/// A scoped span of source text.
-struct Token { scope: String, start: usize }
-
-fn main() {
-    let answer = 42;
-}</code></pre>
-      </template>
-      <template data-lang="scss" data-label="SCSS">
-        <pre><code class="language-scss">// Author a theme from a token map
-$keyword: #c792ea;
-
-@mixin syntax-theme($name) {
-  [data-syntax-theme="#{$name}"] {
-    --syntax-keyword: #{$keyword};
-  }
-}</code></pre>
-      </template>
-      <template data-lang="sql" data-label="SQL">
-        <pre><code class="language-sql">-- Find recent tokens
-SELECT id, scope FROM tokens
-WHERE start &gt;= 0
-LIMIT 10;</code></pre>
-      </template>
-      <template data-lang="svelte" data-label="Svelte">
-        <pre><code class="language-svelte">&lt;script&gt;
-  let count = 0;
-&lt;/script&gt;
-
-&lt;button on:click={() =&gt; count++}&gt;Count: {count}&lt;/button&gt;</code></pre>
-      </template>
-      <template data-lang="swift" data-label="Swift">
-        <pre><code class="language-swift">struct Token {
-    let scope: String
-    var start = 0
-}</code></pre>
-      </template>
-      <template data-lang="toml" data-label="TOML">
-        <pre><code class="language-toml">name = "microlighter"
-version = "1.0.0"
-
-[dependencies]
-rollup = "4.46.2"</code></pre>
-      </template>
-      <template data-lang="tsx" data-label="TSX">
-        <pre><code class="language-tsx">function Badge({ label }: { label: string }) {
-  return &lt;span className="badge"&gt;{label}&lt;/span&gt;;
-}</code></pre>
-      </template>
-      <template data-lang="typescript" data-label="TypeScript">
-        <pre><code class="language-typescript">interface Token {
-  scope: string;
-  start: number;
-}
-
-const answer: number = 42;</code></pre>
-      </template>
-      <template data-lang="vue" data-label="Vue">
-        <pre><code class="language-vue">&lt;script setup&gt;
-const count = ref(0)
-&lt;/script&gt;
-
-&lt;button @click="count++"&gt;Count: {{ count }}&lt;/button&gt;</code></pre>
-      </template>
-      <template data-lang="yaml" data-label="YAML">
-        <pre><code class="language-yaml">name: CI
-on: [push]
-jobs:
-  test:
-    runs-on: ubuntu-latest</code></pre>
-      </template>
       </div>
     </section>
 
@@ -784,30 +447,70 @@ jobs:
     });
   </script>
 
-  <script>
-    // Every language lives as an inert <template> until it's picked, so only
-    // one sample (and its grammar) is ever live in the DOM at a time.
+  <script type="module">
+    // languages.js is generated by scripts/sync-samples.mjs from the shipped
+    // grammars. It drives both the index below and the playground, whose
+    // samples are fetched on demand so only one grammar is ever live at a time.
+    import languages, { groups } from "./languages.js";
+
+    const languageGroups = document.querySelector(".language-groups");
+    groups.forEach(group => {
+      const members = languages.filter(language => language.group === group);
+      if (!members.length) return;
+
+      const heading = document.createElement("h3");
+      heading.textContent = group;
+      const list = document.createElement("ul");
+      members.forEach(({ name, label, aliases }) => {
+        const item = document.createElement("li");
+        item.dataset.lang = name;
+        item.textContent = label;
+        if (aliases.length) item.title = `Also: ${aliases.join(", ")}`;
+        list.append(item);
+      });
+
+      const container = document.createElement("div");
+      container.className = "language-group";
+      container.append(heading, list);
+      languageGroups.append(container);
+    });
+
     const playgroundSelect = document.querySelector("#playground-language");
     const playgroundOutput = document.querySelector("#playground-output");
-    const playgroundTemplates = [...document.querySelectorAll(".playground-body > template")];
     const defaultPlaygroundLanguage = "css";
+    const samples = new Map();
 
-    playgroundTemplates.forEach(template => {
+    languages.forEach(({ name, label }) => {
       const option = document.createElement("option");
-      option.value = template.dataset.lang;
-      option.textContent = template.dataset.label;
+      option.value = name;
+      option.textContent = label;
       playgroundSelect.append(option);
     });
 
-    const renderPlaygroundSample = language => {
-      const template = playgroundTemplates.find(candidate => candidate.dataset.lang === language);
-      if (!template) return;
+    const loadSample = language => {
+      if (!samples.has(language)) {
+        samples.set(language, fetch(`./samples/${language}.sample`).then(response => {
+          if (!response.ok) throw new Error(`No sample for ${language}`);
+          return response.text();
+        }));
+      }
+      return samples.get(language);
+    };
 
-      playgroundOutput.replaceChildren(template.content.cloneNode(true));
-      const codeBlock = playgroundOutput.querySelector("code");
+    const renderPlaygroundSample = async language => {
+      const sample = await loadSample(language);
+      // A newer selection may have resolved first.
+      if (playgroundSelect.value !== language) return;
+
+      const codeBlock = document.createElement("code");
+      codeBlock.className = `language-${language}`;
+      codeBlock.textContent = sample.replace(/\n$/, "");
       codeBlock.contentEditable = "plaintext-only";
       codeBlock.spellcheck = false;
       codeBlock.setAttribute("aria-label", "Editable code sample");
+      const pre = document.createElement("pre");
+      pre.append(codeBlock);
+      playgroundOutput.replaceChildren(pre);
       playgroundOutput.dispatchEvent(new CustomEvent("syntax-highlight", { bubbles: true }));
     };
 

@@ -1,0 +1,58 @@
+package local:demo;
+
+// An example interface.
+interface shared {
+    // Examples of various types:
+
+    record metadata {
+        a: u32,
+        b: string,
+    }
+
+    enum errno {
+        too-big,
+        too-small,
+    }
+
+    // Use `%` to name something after a keyword.
+    variant %variant {
+        baby,
+        child(u32), // optional type payload
+        adult,
+    }
+
+    flags permissions {
+        read,
+        write,
+    }
+
+    resource blob {
+        constructor(init: list<u8>);
+        write: func(bytes: list<u8>);
+        read: func(n: u32) -> list<u8>;
+        merge: static func(lhs: borrow<blob>, rhs: borrow<blob>) -> blob;
+    }
+}
+
+interface dependent-interface {
+    use shared.{metadata};
+
+    type aliased-metadata = metadata;
+
+    foo: func() -> aliased-metadata;
+}
+
+// An example world.
+world my-world {
+    import host: interface {
+        log: func(param: string);
+    }
+
+    import wasi:clocks/monotonic-clock;
+
+    export wasi:cli/run;
+
+    export run: func(x: u32) -> list<string>;
+}
+
+// Mostly inspired by https://component-model.bytecodealliance.org/design/wit.html

@@ -5,9 +5,10 @@
   <title>MicroLighter grammar exhaustive fixture</title>
   <!--
     Not published to docs/: this fixture exists only to verify, in a real
-    browser, that every canonical grammar in src/grammars/*.js loads and
-    highlights via the built docs/microlighter runner. It is intentionally
-    unstyled and is not part of the curated homepage demo.
+    browser, that every language in docs/languages.js loads its grammar and
+    highlights via the built docs/microlighter runner. Samples come from
+    docs/samples/, the same files the homepage playground uses. It is
+    intentionally unstyled and is not part of the curated homepage demo.
   -->
   <link rel="stylesheet" href="../../docs/microlighter/themes/index.css">
   <style>
@@ -20,200 +21,26 @@
   </style>
 </head>
 <body>
-  <main>
-    <pre><code class="language-assembly">section .data
-    msg db "tokens", 0
-section .text
-    global _start
-_start:
-    mov eax, 1
-    int 0x80</code></pre>
-    <pre><code class="language-astro">---
-const greeting = "Hello";
----
+  <main></main>
+  <script type="module">
+    import languages from "../../docs/languages.js";
+    import { highlightAll } from "../../docs/microlighter/index.js";
 
-&lt;h1&gt;{greeting}, World!&lt;/h1&gt;
+    const main = document.querySelector("main");
+    const blocks = await Promise.all(languages.map(async ({ name }) => {
+      const response = await fetch(`../../docs/samples/${name}.sample`);
+      const code = document.createElement("code");
+      code.className = `language-${name}`;
+      code.textContent = (await response.text()).replace(/\n$/, "");
+      const pre = document.createElement("pre");
+      pre.append(code);
+      return pre;
+    }));
+    main.append(...blocks);
 
-&lt;style&gt;
-  h1 { color: royalblue; }
-&lt;/style&gt;</code></pre>
-    <pre><code class="language-bash">#!/usr/bin/env bash
-set -euo pipefail
-
-# Rebuild dist/ and run the test suite
-npm run build &amp;&amp; npm test</code></pre>
-    <pre><code class="language-c">#include &lt;stdio.h&gt;
-
-int main(void) {
-    printf("tokens: %d\n", 42);
-    return 0;
-}</code></pre>
-    <pre><code class="language-cpp">#include &lt;string&gt;
-
-struct Token {
-    std::string scope;
-    int start = 0;
-};</code></pre>
-    <pre><code class="language-csharp">public class Token {
-    public string Scope { get; set; } = "keyword";
-    public int Start { get; set; } = 0;
-}</code></pre>
-    <pre><code class="language-css">/* Theme a single token */
-::highlight(keyword) {
-  color: var(--syntax-keyword);
-}</code></pre>
-    <pre><code class="language-dart">class Token {
-  final String scope;
-  final int start;
-  const Token(this.scope, {this.start = 0});
-}</code></pre>
-    <pre><code class="language-dockerfile">FROM node:20-slim
-WORKDIR /app
-COPY . .
-RUN npm ci &amp;&amp; npm run build</code></pre>
-    <pre><code class="language-elixir">defmodule Tokenizer do
-  @moduledoc "Turns source into tokens."
-
-  def tokenize(source), do: String.split(source, " ")
-end</code></pre>
-    <pre><code class="language-git-diff">diff --git a/src/index.js b/src/index.js
---- a/src/index.js
-+++ b/src/index.js
-@@ -1,2 +1,2 @@
--const answer = 0;
-+const answer = 42;</code></pre>
-    <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("tokens:", 42)
-}</code></pre>
-    <pre><code class="language-graphql"># Fetch a token by id
-query GetToken($id: ID!) {
-  token(id: $id) {
-    scope
-  }
-}</code></pre>
-    <pre><code class="language-heex">&lt;%!-- Render the current count --%&gt;
-&lt;.button phx-click="increment" :if={@enabled}&gt;
-  &lt;%= gettext "Count" %&gt;: {@count}
-&lt;/.button&gt;</code></pre>
-    <pre><code class="language-html">&lt;!-- A comment stays a comment --&gt;
-&lt;button type="button" aria-pressed="false"&gt;42&lt;/button&gt;</code></pre>
-    <pre><code class="language-ini">; Application settings
-[server]
-port = 8080
-host = "localhost"
-ssl = true</code></pre>&lt;button type="button" aria-pressed="false"&gt;42&lt;/button&gt;</code></pre>
-    <pre><code class="language-java">public class Token {
-    String scope = "keyword";
-    int start = 0;
-}</code></pre>
-    <pre><code class="language-javascript">// Highlight everything on the page
-import { highlightAll } from "microlighter";
-
-await highlightAll();</code></pre>
-    <pre><code class="language-json">{
-  "name": "microlighter",
-  "version": "1.0.0"
-}</code></pre>
-    <pre><code class="language-kotlin">data class Token(val scope: String, val start: Int = 0)</code></pre>
-    <pre><code class="language-lua">-- Tokenize a tiny slice of source
-local function tokenize(source)
-    return source
-end</code></pre>
-    <pre><code class="language-markdown"># MicroLighter
-
-A **tiny** syntax highlighter for the [CSS Custom Highlight API](https://developer.mozilla.org/).</code></pre>
-    <pre><code class="language-nginx">server {
-    listen 80;
-    server_name example.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-    }
-}</code></pre>
-    <pre><code class="language-objective-c">@interface Token : NSObject
-@property (nonatomic, strong) NSString *scope;
-@end</code></pre>
-    <pre><code class="language-perl">#!/usr/bin/env perl
-use strict;
-use warnings;
-
-my @tokens = split / /, "const x = 42";</code></pre>
-    <pre><code class="language-php">&lt;?php
-
-class Token {
-    public function __construct(private string $scope) {}
-}</code></pre>
-    <pre><code class="language-powershell"># Rebuild dist/ and run the tests
-function Invoke-Build {
-    npm run build
-}</code></pre>
-    <pre><code class="language-python">def tokenize(source: str) -&gt; list[str]:
-    """Split source into words."""
-    return source.split()</code></pre>
-    <pre><code class="language-r"># Tokenize a tiny slice of source
-tokenize &lt;- function(source) {
-  strsplit(source, " ")
-}</code></pre>
-    <pre><code class="language-ruby"># Count tokens in a source string
-def tokenize(source)
-  source.split(" ")
-end</code></pre>
-    <pre><code class="language-rust">/// A scoped span of source text.
-struct Token { scope: String, start: usize }
-
-fn main() {
-    let answer = 42;
-}</code></pre>
-    <pre><code class="language-scss">// Author a theme from a token map
-$keyword: #c792ea;
-
-@mixin syntax-theme($name) {
-  [data-syntax-theme="#{$name}"] {
-    --syntax-keyword: #{$keyword};
-  }
-}</code></pre>
-    <pre><code class="language-sql">-- Find recent tokens
-SELECT id, scope FROM tokens
-WHERE start &gt;= 0
-LIMIT 10;</code></pre>
-    <pre><code class="language-svelte">&lt;script&gt;
-  let count = 0;
-&lt;/script&gt;
-{#if count &gt; 0}
-  &lt;button on:click={() =&gt; count++}&gt;Count: {count}&lt;/button&gt;
-{/if}</code></pre>
-    <pre><code class="language-swift">struct Token {
-    let scope: String
-    var start = 0
-}</code></pre>
-    <pre><code class="language-toml">name = "microlighter"
-version = "1.0.0"
-
-[dependencies]
-rollup = "4.46.2"</code></pre>
-    <pre><code class="language-tsx">function Badge({ label }: { label: string }) {
-  return &lt;span className="badge"&gt;{label}&lt;/span&gt;;
-}</code></pre>
-    <pre><code class="language-typescript">interface Token {
-  scope: string;
-  start: number;
-}
-
-const answer: number = 42;</code></pre>
-    <pre><code class="language-vue">&lt;script setup&gt;
-const count = ref(0)
-&lt;/script&gt;
-&lt;button @click="count++"&gt;Count: {{ count }}&lt;/button&gt;</code></pre>
-    <pre><code class="language-yaml">name: CI
-on: [push]
-jobs:
-  test:
-    runs-on: ubuntu-latest</code></pre>
-  </main>
-  <script type="module" src="../../docs/microlighter/microlighter.js"></script>
+    await highlightAll();
+    // Tests wait for this before reading CSS.highlights.
+    document.documentElement.dataset.highlighted = "true";
+  </script>
 </body>
 </html>
