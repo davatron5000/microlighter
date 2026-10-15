@@ -356,6 +356,7 @@ export function YetAnotherTodoApp(): JSX.Element {
             <li data-lang="svelte">Svelte</li>
             <li data-lang="vue">Vue</li>
             <li data-lang="heex">HEEx</li>
+            <li data-lang="twig">Twig</li>
           </ul>
         </div>
         <div class="language-group">
@@ -675,6 +676,14 @@ rollup = "4.46.2"</code></pre>
         <pre><code class="language-tsx">function Badge({ label }: { label: string }) {
   return &lt;span className="badge"&gt;{label}&lt;/span&gt;;
 }</code></pre>
+      </template>
+      <template data-lang="twig" data-label="Twig">
+        <pre><code class="language-twig">{# Render the visible items #}
+&lt;ul class="{{ items|length &gt; 3 ? 'grid' : 'list' }}"&gt;
+  {% for item in items if item.visible %}
+    &lt;li&gt;{{ item.name|upper }}&lt;/li&gt;
+  {% endfor %}
+&lt;/ul&gt;</code></pre>
       </template>
       <template data-lang="typescript" data-label="TypeScript">
         <pre><code class="language-typescript">interface Token {

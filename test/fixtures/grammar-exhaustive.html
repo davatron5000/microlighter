@@ -198,6 +198,12 @@ rollup = "4.46.2"</code></pre>
     <pre><code class="language-tsx">function Badge({ label }: { label: string }) {
   return &lt;span className="badge"&gt;{label}&lt;/span&gt;;
 }</code></pre>
+    <pre><code class="language-twig">{# Render the visible items #}
+&lt;ul class="{{ items|length &gt; 3 ? 'grid' : 'list' }}"&gt;
+  {% for item in items if item.visible %}
+    &lt;li&gt;{{ item.name|upper }}&lt;/li&gt;
+  {% endfor %}
+&lt;/ul&gt;</code></pre>
     <pre><code class="language-typescript">interface Token {
   scope: string;
   start: number;

@@ -138,4 +138,37 @@ test.describe("Grammar exhaustive fixture (test/fixtures/grammar-exhaustive.html
     expect(heexHighlights.functions).toContain("gettext");
     expect(heexHighlights.variables).toEqual(expect.arrayContaining(["@enabled", "@count"]));
   });
+
+  test("categorizes Twig tags, filters, and expressions inside HTML", async ({ page }) => {
+    await page.goto(FIXTURE, { waitUntil: "networkidle" });
+
+    const twigHighlights = await page.evaluate(() => {
+      const getRanges = category => [...CSS.highlights.get(category) ?? []]
+        .filter(range => range.startContainer.parentElement?.closest("code.language-twig"))
+        .map(range => range.toString());
+
+      return {
+        attributes: getRanges("attribute-name"),
+        comments: getRanges("comment"),
+        functions: getRanges("function"),
+        keywords: getRanges("keyword"),
+        operators: getRanges("operator"),
+        punctuation: getRanges("punctuation"),
+        strings: getRanges("string"),
+        tags: getRanges("tag"),
+        variables: getRanges("variable")
+      };
+    });
+
+    expect(twigHighlights.attributes).toContain("class");
+    expect(twigHighlights.comments).toContain("{# Render the visible items #}");
+    expect(twigHighlights.functions).toEqual(expect.arrayContaining(["length", "upper"]));
+    expect(twigHighlights.keywords).toEqual(expect.arrayContaining(["for", "if", "endfor"]));
+    expect(twigHighlights.operators).toEqual(expect.arrayContaining(["in", ">", "?"]));
+    expect(twigHighlights.operators).not.toContain("|");
+    expect(twigHighlights.punctuation).not.toContain(".");
+    expect(twigHighlights.strings).toEqual(expect.arrayContaining(["'grid'", "'list'"]));
+    expect(twigHighlights.tags).toEqual(expect.arrayContaining(["ul", "li"]));
+    expect(twigHighlights.variables).toEqual(expect.arrayContaining(["items", "item", "visible", "name"]));
+  });
 });
