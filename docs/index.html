@@ -406,6 +406,7 @@ export function YetAnotherTodoApp(): JSX.Element {
             <li data-lang="git-diff">Git diff</li>
             <li data-lang="ini">INI</li>
             <li data-lang="nginx">nginx</li>
+            <li data-lang="apache">Apache</li>
           </ul>
         </div>
       </div>
@@ -426,6 +427,23 @@ export function YetAnotherTodoApp(): JSX.Element {
           </select>
         </label>
         <div class="playground-output" id="playground-output" aria-live="polite"></div>
+      <template data-lang="apache" data-label="Apache">
+        <pre><code class="language-apache"># Redirect all traffic to HTTPS
+&lt;VirtualHost *:80&gt;
+    ServerName example.com
+    DocumentRoot "/var/www/html"
+
+    &lt;Directory "/var/www/html"&gt;
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    &lt;/Directory&gt;
+
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+&lt;/VirtualHost&gt;</code></pre>
+      </template>
       <template data-lang="assembly" data-label="Assembly (x86 NASM)">
         <pre><code class="language-assembly">section .data
     msg db "tokens", 0
