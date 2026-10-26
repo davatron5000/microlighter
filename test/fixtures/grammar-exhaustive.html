@@ -134,6 +134,13 @@ A **tiny** syntax highlighter for the [CSS Custom Highlight API](https://develop
         proxy_pass http://127.0.0.1:3000;
     }
 }</code></pre>
+    <pre><code class="language-apache"># Redirect to HTTPS
+&lt;VirtualHost *:80&gt;
+    ServerName example.com
+    DocumentRoot "/var/www/html"
+    RewriteEngine On
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+&lt;/VirtualHost&gt;</code></pre>
     <pre><code class="language-objective-c">@interface Token : NSObject
 @property (nonatomic, strong) NSString *scope;
 @end</code></pre>
