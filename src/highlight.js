@@ -94,20 +94,45 @@ const getCategory = scope => {
 };
 
 /**
+ * A descendant text node and its character offset range in the full text of the code block.
+ * @typedef {object} TextNodeItem
+ * @property {Text} node
+ * @property {number} start
+ * @property {number} end
+ */
+
+/**
+ * Find the text node and local character offset corresponding to a global offset.
+ * @param {TextNodeItem[]} textNodes
+ * @param {number} offset
+ * @param {boolean} isEnd
+ * @returns {[Text, number]}
+ */
+const findNode = (textNodes, offset, isEnd) => {
+  const item = textNodes.find(item => isEnd ? offset <= item.end : offset < item.end);
+  if (item) return [item.node, offset - item.start];
+  const fallback = /** @type {TextNodeItem} */ (isEnd ? textNodes.at(-1) : textNodes[0]);
+  return [fallback.node, isEnd ? fallback.node.data.length : 0];
+};
+
+/**
  * Register a matched text span under its CSS highlight category.
- * @param {Text} node
+ * @param {TextNodeItem[]} textNodes
  * @param {number} start
  * @param {number} end
  * @param {string} scope
  * @returns {void}
  */
-const addRange = (node, start, end, scope) => {
+const addRange = (textNodes, start, end, scope) => {
   const category = getCategory(scope);
   if (!category || start === end) return;
 
+  const [startNode, startOffset] = findNode(textNodes, start, false);
+  const [endNode, endOffset] = findNode(textNodes, end, true);
+
   const range = new Range();
-  range.setStart(node, start);
-  range.setEnd(node, end);
+  range.setStart(startNode, startOffset);
+  range.setEnd(endNode, endOffset);
 
   if (!highlights.has(category)) highlights.set(category, new Highlight());
   /** @type {Highlight} */ (highlights.get(category)).add(range);
@@ -115,15 +140,15 @@ const addRange = (node, start, end, scope) => {
 
 /**
  * Add named capture-group spans from a TextMate rule match.
- * @param {Text} node
+ * @param {TextNodeItem[]} textNodes
  * @param {Match} match
  * @param {GrammarCaptures} [captures]
  * @returns {void}
  */
-const addCaptures = (node, match, captures = {}) => {
+const addCaptures = (textNodes, match, captures = {}) => {
   Object.entries(captures).forEach(([index, capture]) => {
     const offsets = match.indices[+index];
-    if (offsets) addRange(node, ...offsets, capture.name);
+    if (offsets) addRange(textNodes, ...offsets, capture.name);
   });
 };
 
@@ -187,19 +212,19 @@ export const highlightAll = async ({
    * Find the next bounded match, reusing compiled grammar expressions and the
    * memoized match for each pattern.
    * @param {string} pattern
-   * @param {Text} node
+   * @param {string} text
    * @param {number} start
    * @param {number} end
    * @returns {Match | null}
    */
-  const exec = (pattern, node, start, end) => {
+  const exec = (pattern, text, start, end) => {
     let match = matches.get(pattern);
 
     if (!match || match.indices[0][0] < start) {
       if (!regexes.has(pattern)) regexes.set(pattern, new RegExp(pattern, "dgm"));
       const regex = /** @type {RegExp} */ (regexes.get(pattern));
       regex.lastIndex = start;
-      match = /** @type {Match | null} */ (regex.exec(node.data)) || noMatch;
+      match = /** @type {Match | null} */ (regex.exec(text)) || noMatch;
       matches.set(pattern, match);
     }
 
@@ -269,19 +294,19 @@ export const highlightAll = async ({
 
   /**
    * Select the rule with the earliest match in a text region.
-   * @param {Text} node
+   * @param {string} text
    * @param {RuleContext[]} contexts
    * @param {number} start
    * @param {number} end
    * @returns {(RuleContext & {match: Match}) | null}
    */
-  const nextRule = (node, contexts, start, end) => {
+  const nextRule = (text, contexts, start, end) => {
     /** @type {(RuleContext & {match: Match}) | null} */
     let winner = null;
 
     contexts.forEach(context => {
       const pattern = /** @type {string} */ (context.rule.match || context.rule.begin);
-      const match = exec(pattern, node, start, end);
+      const match = exec(pattern, text, start, end);
       if (!match) return;
 
       if (!winner || match.indices[0][0] < winner.match.indices[0][0]) {
@@ -294,7 +319,8 @@ export const highlightAll = async ({
 
   /**
    * Scan a bounded text region, recursively handling begin/end rule pairs.
-   * @param {Text} node
+   * @param {string} text
+   * @param {TextNodeItem[]} textNodes
    * @param {GrammarRule[]} rules
    * @param {number} start
    * @param {number} end
@@ -303,13 +329,13 @@ export const highlightAll = async ({
    * @param {{pattern: string, applyEndPatternLast?: boolean} | null} [closing]
    * @returns {{contentEnd: number, end: number, match: Match | null}}
    */
-  const scanRegion = (node, rules, start, end, grammar, baseGrammar = grammar, closing = null) => {
+  const scanRegion = (text, textNodes, rules, start, end, grammar, baseGrammar = grammar, closing = null) => {
     const contexts = expandRules(rules, grammar, baseGrammar);
     let cursor = start;
 
     while (cursor < end) {
-      const candidate = nextRule(node, contexts, cursor, end);
-      const endMatch = closing ? exec(closing.pattern, node, cursor, end) : null;
+      const candidate = nextRule(text, contexts, cursor, end);
+      const endMatch = closing ? exec(closing.pattern, text, cursor, end) : null;
       const candidateStart = candidate?.match.indices[0][0] ?? Infinity;
       const endStart = endMatch?.indices[0][0] ?? Infinity;
 
@@ -321,14 +347,15 @@ export const highlightAll = async ({
 
       const { rule, match, grammar: ruleGrammar } = candidate;
       if (rule.match) {
-        if (rule.name) addRange(node, ...match.indices[0], rule.name);
-        addCaptures(node, match, rule.captures);
+        if (rule.name) addRange(textNodes, ...match.indices[0], rule.name);
+        addCaptures(textNodes, match, rule.captures);
         cursor = match.indices[0][1] > cursor ? match.indices[0][1] : cursor + 1;
         continue;
       }
 
       const nested = scanRegion(
-        node,
+        text,
+        textNodes,
         rule.patterns || [],
         match.indices[0][1],
         end,
@@ -337,10 +364,10 @@ export const highlightAll = async ({
         { pattern: expandEnd(/** @type {string} */ (rule.end), match), applyEndPatternLast: rule.applyEndPatternLast }
       );
 
-      if (rule.name) addRange(node, match.indices[0][0], nested.end, rule.name);
-      if (rule.contentName) addRange(node, match.indices[0][1], nested.contentEnd, rule.contentName);
-      addCaptures(node, match, rule.beginCaptures || rule.captures);
-      if (nested.match) addCaptures(node, nested.match, rule.endCaptures || rule.captures);
+      if (rule.name) addRange(textNodes, match.indices[0][0], nested.end, rule.name);
+      if (rule.contentName) addRange(textNodes, match.indices[0][1], nested.contentEnd, rule.contentName);
+      addCaptures(textNodes, match, rule.beginCaptures || rule.captures);
+      if (nested.match) addCaptures(textNodes, nested.match, rule.endCaptures || rule.captures);
 
       cursor = nested.end > cursor ? nested.end : cursor + 1;
     }
@@ -353,12 +380,27 @@ export const highlightAll = async ({
     if (!grammar) return;
 
     codeBlock.normalize();
-    const node = /** @type {Text | null} */ (codeBlock.firstChild);
-    if (node?.nodeType !== Node.TEXT_NODE || node.nextSibling) return;
+
+    const walker = document.createTreeWalker(codeBlock, NodeFilter.SHOW_TEXT);
+    /** @type {TextNodeItem[]} */
+    const textNodes = [];
+    let text = "";
+    let n;
+    while ((n = /** @type {Text | null} */ (walker.nextNode()))) {
+      if (n.data.length === 0) continue;
+      textNodes.push({
+        node: n,
+        start: text.length,
+        end: text.length + n.data.length,
+      });
+      text += n.data;
+    }
+
+    if (!textNodes.length) return;
 
     matches = new Map();
 
-    scanRegion(node, grammar.patterns, 0, node.data.length, grammar);
+    scanRegion(text, textNodes, grammar.patterns, 0, text.length, grammar);
   });
 
   highlights.forEach((ranges, category) => {
