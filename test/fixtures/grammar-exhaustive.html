@@ -48,6 +48,12 @@ int main(void) {
     printf("tokens: %d\n", 42);
     return 0;
 }</code></pre>
+    <pre><code class="language-cddl">; Example CDDL
+person = {
+  name: tstr,
+  age: uint,
+  ? email: tstr,
+}</code></pre>
     <pre><code class="language-cpp">#include &lt;string&gt;
 
 struct Token {
@@ -208,6 +214,12 @@ const answer: number = 42;</code></pre>
 const count = ref(0)
 &lt;/script&gt;
 &lt;button @click="count++"&gt;Count: {{ count }}&lt;/button&gt;</code></pre>
+    <pre><code class="language-webidl">[Exposed=Window]
+interface Example : EventTarget {
+  constructor(DOMString name);
+  readonly attribute unsigned long count;
+  undefined doSomething(sequence&lt;DOMString&gt; items);
+};</code></pre>
     <pre><code class="language-yaml">name: CI
 on: [push]
 jobs:
