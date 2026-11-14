@@ -51,6 +51,33 @@ const highlightSnippet = (page, language, code) =>
     return ranges;
   }, { language, code });
 
+/**
+ * Highlight a single injected code block containing markup and read back its ranges by category.
+ */
+const highlightHtmlSnippet = (page, language, html) =>
+  page.evaluate(async ({ language, html }) => {
+    const root = document.createElement("div");
+    const block = document.createElement("code");
+    const pre = document.createElement("pre");
+    block.className = `language-${language}`;
+    block.innerHTML = html;
+    pre.append(block);
+    root.append(pre);
+    document.body.append(root);
+
+    const { highlightAll } = await import("/docs/microlighter/index.js");
+    await highlightAll({ root });
+
+    const ranges = {};
+    for (const [category, highlight] of CSS.highlights) {
+      for (const range of highlight) {
+        if (!block.contains(range.startContainer)) continue;
+        (ranges[category] ??= []).push(range.toString());
+      }
+    }
+    return ranges;
+  }, { language, html });
+
 test.describe("MicroLighter demo site (docs/index.html)", () => {
   test("registers highlight ranges across every code block", async ({ page }) => {
     await page.goto(HOMEPAGE, { waitUntil: "networkidle" });
@@ -331,6 +358,23 @@ test.describe("MicroLighter demo site (docs/index.html)", () => {
     const ranges = await highlightSnippet(page, "css", "a,\nb\n{\n  color: red;\n}\n");
 
     expect(ranges.selector).toEqual(["a,\nb"]);
+  });
+
+  test("highlights code blocks containing markup inside, coincident, and crossing highlight boundaries", async ({ page }) => {
+    await page.goto(HOMEPAGE, { waitUntil: "networkidle" });
+
+    // Markup inside a token:
+    const inside = await highlightHtmlSnippet(page, "javascript", "func<span>ti</span>on foo() {}");
+    expect(inside.storage).toContain("function");
+
+    // Markup coincident with a token:
+    const coincident = await highlightHtmlSnippet(page, "javascript", '<a href="#test">const</a> x = 1;');
+    expect(coincident.storage).toContain("const");
+
+    // Markup crossing token boundaries:
+    const crossing = await highlightHtmlSnippet(page, "javascript", '<a href="#test">let x =</a> 1;');
+    expect(crossing.storage).toContain("let");
+    expect(crossing.variable).toContain("x");
   });
 
   test("highlights a large stylesheet without pathological rescanning", async ({ page }) => {
