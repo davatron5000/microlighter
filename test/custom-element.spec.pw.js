@@ -1,6 +1,101 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("MicroLighter custom element", () => {
+  test("translates copy labels and announcements, including live updates", async ({ page }) => {
+    await page.goto("/docs/custom-element.html", { waitUntil: "networkidle" });
+    await page.clock.install();
+    await page.evaluate(() => {
+      window.copyWrites = [];
+      window.notifications = [];
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: { writeText: value => window.copyWrites.push(value) }
+      });
+      Object.defineProperty(HTMLElement.prototype, "ariaNotify", {
+        configurable: true,
+        value(message) {
+          window.notifications.push(message);
+        }
+      });
+      document.body.insertAdjacentHTML("beforeend", `
+        <micro-lighter id="translated" controls="copy" lang="es"
+          copy-label="Copiar" copied-label="Copiado"
+          copied-announcement="Copiado al portapapeles">
+          <pre><code>const translated = true;</code></pre>
+        </micro-lighter>
+      `);
+    });
+
+    const element = page.locator("#translated");
+    const button = element.getByRole("button");
+    await expect(button).toHaveAccessibleName("Copiar");
+    await button.click();
+    await expect(button).toHaveText("Copiado");
+    expect(await page.evaluate(() => ({
+      writes: window.copyWrites,
+      notifications: window.notifications
+    }))).toEqual({
+      writes: ["const translated = true;"],
+      notifications: ["Copiado al portapapeles"]
+    });
+
+    await element.evaluate(element => {
+      element.setAttribute("copied-label", "Listo");
+      element.setAttribute("copy-label", "Copiar de nuevo");
+      element.querySelector("code").append("\n");
+    });
+    await expect(button).toHaveText("Listo");
+    await page.clock.fastForward(2000);
+    await expect(button).toHaveAccessibleName("Copiar de nuevo");
+    await expect(page.locator("micro-lighter").first().getByRole("button"))
+      .toHaveText("Copy");
+
+    await element.evaluate(element => {
+      element.removeAttribute("copy-label");
+      element.setAttribute("copied-label", "");
+      element.setAttribute("copied-announcement", "");
+    });
+    await expect(button).toHaveText("Copy");
+    await button.click();
+    await expect(button).toHaveText("Copied");
+    expect(await page.evaluate(() => window.notifications))
+      .toEqual(["Copiado al portapapeles", "Copied to clipboard"]);
+    await page.clock.fastForward(2000);
+    await expect(button).toHaveText("Copy");
+
+    await element.evaluate(element => element.setAttribute("copy-label", "<b>Copy</b>"));
+    await expect(button).toHaveText("<b>Copy</b>");
+    await expect(button.locator("b")).toHaveCount(0);
+    await element.evaluate(element => element.setAttribute("copy-label", ""));
+    await expect(button).toHaveText("Copy");
+  });
+
+  test("resets the translated copy label when reconnected", async ({ page }) => {
+    await page.goto("/docs/custom-element.html", { waitUntil: "networkidle" });
+    await page.clock.install();
+    await page.evaluate(() => {
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: { writeText: async () => {} }
+      });
+    });
+    const element = page.locator("micro-lighter").first();
+    await element.evaluate(element => {
+      element.setAttribute("copy-label", "Copiar");
+      element.setAttribute("copied-label", "Copiado");
+    });
+    const button = element.getByRole("button");
+    await expect(button).toHaveText("Copiar");
+    await button.click();
+    await expect(button).toHaveText("Copiado");
+    await element.evaluate(element => {
+      element.remove();
+      document.body.prepend(element);
+    });
+    await expect(page.locator("micro-lighter").first().getByRole("button"))
+      .toHaveText("Copiar");
+  });
+
   test("renders the custom element demo page", async ({ page }) => {
     await page.goto("/docs/custom-element.html", { waitUntil: "networkidle" });
 

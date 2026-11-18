@@ -130,7 +130,25 @@ Import the optional `<micro-lighter>` custom element:
 | --- | --- |
 | `language` | Language to use. Overrides language metadata on `<pre>` or `<code>` |
 | `controls="copy"` | Adds a copy button |
+| `copy-label` | Copy button text (default: `"Copy"`) |
+| `copied-label` | Button text for two seconds after copying (default: `"Copied"`) |
+| `copied-announcement` | Success message announced with `ariaNotify()` where supported (default: `"Copied to clipboard"`) |
 | `line-numbers` | Adds a line number gutter without changing copied code |
+
+Translate the copy controls by supplying labels in the content language:
+
+```html
+<micro-lighter controls="copy" lang="es"
+  copy-label="Copiar"
+  copied-label="Copiado"
+  copied-announcement="Copiado al portapapeles">
+  <pre><code class="language-javascript">const answer = 42;</code></pre>
+</micro-lighter>
+```
+
+Labels are plain text and can be changed at runtime with `setAttribute()`.
+Missing or empty values use the English defaults. The `lang` attribute
+identifies the content language; it does not translate labels automatically.
 
 Style the controls with `::part(copy-button)` and `::part(line-numbers)`.
 

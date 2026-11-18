@@ -90,12 +90,16 @@ template.innerHTML = `
 `;
 
 export class MicroLighter extends HTMLElement {
-  static observedAttributes = ["controls", "language", "line-numbers"];
+  static observedAttributes = [
+    "controls", "language", "line-numbers",
+    "copy-label", "copied-label", "copied-announcement"
+  ];
 
   /** @type {HTMLButtonElement} */
   #button;
   /** @type {HTMLElement | null} */
   #codeBlock = null;
+  #copied = false;
   #languageOverridden = false;
   /** @type {HTMLElement} */
   #lineNumbers;
@@ -141,6 +145,7 @@ export class MicroLighter extends HTMLElement {
     this.#resizeObserver.disconnect();
     window.removeEventListener("resize", this.#onResize);
     clearTimeout(this.#resetCopyLabel);
+    this.#copied = false;
   }
 
   attributeChangedCallback() {
@@ -151,13 +156,23 @@ export class MicroLighter extends HTMLElement {
     if (!this.#codeBlock) return;
 
     await navigator.clipboard.writeText(this.#codeBlock.textContent ?? "");
-    this.#button.textContent = "Copied";
-    this.#button.ariaNotify?.("Copied to clipboard");
+    this.#copied = true;
+    this.#updateCopyLabel();
+    this.#button.ariaNotify?.(
+      this.getAttribute("copied-announcement") || "Copied to clipboard"
+    );
 
     clearTimeout(this.#resetCopyLabel);
     this.#resetCopyLabel = setTimeout(() => {
-      this.#button.textContent = "Copy";
+      this.#copied = false;
+      this.#updateCopyLabel();
     }, 2000);
+  }
+
+  #updateCopyLabel() {
+    this.#button.textContent = this.#copied
+      ? this.getAttribute("copied-label") || "Copied"
+      : this.getAttribute("copy-label") || "Copy";
   }
 
   #update() {
@@ -178,6 +193,7 @@ export class MicroLighter extends HTMLElement {
     }
 
     this.#button.hidden = !this.#hasControl("copy") || !codeBlock;
+    this.#updateCopyLabel();
 
     const language = this.getAttribute("language");
     if (codeBlock && language) {
